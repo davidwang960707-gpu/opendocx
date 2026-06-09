@@ -19,6 +19,9 @@
     <img src="https://img.shields.io/badge/Static%20Site-Publishing-0EA5E9?style=for-the-badge&logo=githubpages&logoColor=white" alt="Static Site Publishing" />
   </p>
   <p>
+    <a href="https://davidwang960707-gpu.github.io/opendocx/showcase/render-showcase.html">在线预览：OpenDocX 静态站渲染能力速查</a>
+  </p>
+  <p>
     <img src="https://img.shields.io/badge/React%2018-TypeScript-4F46E5?style=for-the-badge&logo=react&logoColor=white" alt="React TypeScript" />
     <img src="https://img.shields.io/badge/FastAPI-Python%203.12-22C55E?style=for-the-badge&logo=fastapi&logoColor=white" alt="FastAPI Python" />
     <img src="https://img.shields.io/badge/PostgreSQL-pgvector-2563EB?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL pgvector" />
@@ -148,7 +151,13 @@ examples/markdown-rendering-showcase.md
 docs/showcase/render-showcase.html
 ```
 
-这份 HTML 可以直接放到 GitHub Pages / 静态文件服务中展示，用来说明 OpenDocX 静态站对表格、提示块、代码高亮、任务列表、图片、GIF、Mermaid 和公式占位的渲染效果。
+线上预览地址：
+
+```text
+https://davidwang960707-gpu.github.io/opendocx/showcase/render-showcase.html
+```
+
+这份 HTML 已按 GitHub Pages 的 `/docs` 发布目录准备，也可以直接放到其他静态文件服务中展示，用来说明 OpenDocX 静态站对表格、提示块、代码高亮、任务列表、图片、GIF、Mermaid 和公式占位的渲染效果。
 
 ## 技术栈
 
@@ -170,7 +179,7 @@ docs/showcase/render-showcase.html
 | [产品需求文档](docs/PRD.md) | 产品定位、用户场景和版本范围 |
 | [路线图](docs/ROADMAP.md) | v0.1.0 之后的计划 |
 | [开源检查清单](docs/OPEN_SOURCE_CHECKLIST.md) | 发布前检查项 |
-| [静态站渲染能力速查 HTML](docs/showcase/render-showcase.html) | 可直接发布的 Markdown 渲染展示页 |
+| [静态站渲染能力速查 HTML](docs/showcase/render-showcase.html) / [线上预览](https://davidwang960707-gpu.github.io/opendocx/showcase/render-showcase.html) | 可直接发布的 Markdown 渲染展示页 |
 | [OpenDocX 与 Docusaurus 对标](docs/OpenDocX-vs-Docusaurus-对标报告-2026-06-08.md) | 定位差异和能力边界 |
 
 ## v0.1.0-alpha 状态
