@@ -6,7 +6,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_db
 from app.models.user import User
-from app.schemas import LoginRequest, LoginResponse, ApiResponse
+from app.schemas import LoginRequest, ApiResponse
 from app.schemas.user import UserOut as UserOutFull  # 8 字段完整版
 from app.utils.auth import verify_password, create_access_token, get_current_user
 from app.utils.audit import write_audit

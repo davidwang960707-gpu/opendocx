@@ -1,8 +1,7 @@
 """用户与认证 Schema (P1-W3-A1)"""
 from datetime import datetime
 from typing import Optional, Literal
-from pydantic import BaseModel, ConfigDict, EmailStr, Field
-from app.models.user import UserRole
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class UserOut(BaseModel):

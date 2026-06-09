@@ -116,7 +116,7 @@ async def get_build_manifest(
     created_at 强制带 Z 后缀（UTC），避免前端 JS 解析时区错乱。
     """
     import os
-    from datetime import datetime, timezone
+    from datetime import timezone
     from app.models import Project, Version
     rows = (await db.execute(
         select(BuildLog)

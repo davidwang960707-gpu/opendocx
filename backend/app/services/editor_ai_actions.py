@@ -9,7 +9,6 @@ P0-B-3: 把每个 action 的 system + user prompt 模板集中在这里。
   - 上下文：项目标题 / 版本号 / 文档标题让 LLM 知道场景
   - 不超过 4000 token 输入（控制成本 + 延迟）
 """
-from app.routers.editor import AIRequest
 
 
 # ── 系统提示模板 ──────────────────────────────────────────

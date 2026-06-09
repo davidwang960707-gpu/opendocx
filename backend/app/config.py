@@ -1,7 +1,6 @@
 """OpenDocX backend config"""
 from pydantic_settings import BaseSettings
 from functools import lru_cache
-from typing import List
 import os
 
 

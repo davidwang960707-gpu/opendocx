@@ -2,7 +2,6 @@
 
 不依赖数据库，纯函数测试。
 """
-import pytest
 from app.services.ai_analyzer import (
     extract_terms,
     detect_terminology_issues,

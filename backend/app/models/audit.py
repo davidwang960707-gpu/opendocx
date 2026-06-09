@@ -6,8 +6,8 @@ doc create/update/delete, version create/delete, feedback delete) —
 """
 import uuid
 from datetime import datetime
-from typing import Optional, Any
-from sqlalchemy import String, DateTime, Text, JSON, func
+from typing import Optional
+from sqlalchemy import String, DateTime, JSON, func
 from sqlalchemy.orm import Mapped, mapped_column
 from app.models.base import Base
 

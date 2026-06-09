@@ -9,11 +9,10 @@
 - DELETE /api/v1/feedbacks/admin/{id} admin 审核: 任意删 (绕开 visitor_id 校验)
 """
 import uuid
-from datetime import datetime, timezone
+from datetime import timezone
 from fastapi import APIRouter, Depends, HTTPException, Header, Query
-from sqlalchemy import select, func, and_, or_
+from sqlalchemy import select, func, or_
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload
 from app.database import get_db
 from app.models import DocumentFeedback, FeedbackKind, Document, User
 from app.schemas import (
@@ -261,7 +260,7 @@ async def admin_list_feedbacks(
         try:
             q = q.where(DocumentFeedback.kind == FeedbackKind(kind))
         except ValueError:
-            raise HTTPException(status_code=400, detail=f"kind 必须是 like/dislike/bookmark/comment")
+            raise HTTPException(status_code=400, detail="kind 必须是 like/dislike/bookmark/comment")
     if document_id:
         q = q.where(DocumentFeedback.document_id == document_id)
     if user_email:

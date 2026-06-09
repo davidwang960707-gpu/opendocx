@@ -53,5 +53,5 @@ def get_provider() -> LLMProvider:
 
 
 # 触发 provider 自注册（import 副作用）
-from app.services.llm.openai_provider import OpenAIProvider  # noqa: E402
-from app.services.llm.hermes_provider import HermesProvider  # noqa: E402
+from app.services.llm.openai_provider import OpenAIProvider  # noqa: F401,E402
+from app.services.llm.hermes_provider import HermesProvider  # noqa: F401,E402

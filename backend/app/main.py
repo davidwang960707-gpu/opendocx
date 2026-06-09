@@ -1,15 +1,18 @@
 """OpenDocX 后端入口"""
+import logging
+import os
+import traceback
 from contextlib import asynccontextmanager
+
 from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
+
 from app.config import get_settings
 from app.database import engine
-from app.models import Base
 from app.middleware.rate_limit import RateLimitMiddleware
 from app.routers import auth, projects, documents, search, build, stats, editor, feedback, users  # P1-W3-A1
-import logging
-import traceback
 
 settings = get_settings()
 logger = logging.getLogger("opendocx")
@@ -103,10 +106,6 @@ async def health():
 # 静态文件服务 — 构建产物预览
 # /docs 根：自定义索引页（列出所有已发布项目 + 版本）
 # /docs/{slug}/{ver}/... : 静态文件（由 build_service 生成的 HTML）
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import HTMLResponse
-import os
-
 builds_path = os.path.join(settings.data_dir, "builds")
 os.makedirs(builds_path, exist_ok=True)
 

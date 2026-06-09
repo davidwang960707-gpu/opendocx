@@ -10,7 +10,6 @@ import os
 import re
 import time
 from collections import defaultdict
-from typing import Iterable
 
 
 # === 关键词黑名单 (24 个) ===
@@ -125,8 +124,6 @@ def check_nesting_depth(db, parent_id: str | None) -> tuple[bool, str]:
     """
     if not parent_id:
         return True, ""
-    from app.models import DocumentFeedback
-    from sqlalchemy import select
     # 这个函数签名故意简单, 实际用 async
     return True, ""  # 留给 async 包装
 

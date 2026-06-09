@@ -1,7 +1,7 @@
 """文档向量嵌入模型"""
 import uuid
 from datetime import datetime
-from sqlalchemy import String, DateTime, ForeignKey, func, Text
+from sqlalchemy import String, DateTime, ForeignKey, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.models.base import Base
 from pgvector.sqlalchemy import Vector

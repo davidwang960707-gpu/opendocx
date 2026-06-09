@@ -1,5 +1,5 @@
 """项目管理路由"""
-from fastapi import APIRouter, Depends, HTTPException, status, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_db
@@ -22,9 +22,8 @@ async def _enrich_project(db: AsyncSession, p: Project, out: ProjectOut) -> None
     # llm-causal-zh 2 行 v1.0 中 draft 那行是后期 seed/import 误生成,取最新 = draft 反而错)。
     # 因此走更安全策略:不依赖时间, 用 .scalars().all() 拿全,自己 Python 端选 published 优先,
     # 同 status 取最新。这样无论 SQLAlchemy 怎么序列 VersionStatus enum 都能正确比较。
-    from sqlalchemy.orm import attributes
     v_result = await db.execute(
-        select(Version).where(Version.project_id == p.id, Version.is_default == True)
+        select(Version).where(Version.project_id == p.id, Version.is_default.is_(True))
     )
     all_default_vers = v_result.scalars().all()
     if all_default_vers:
@@ -84,7 +83,6 @@ async def list_projects(
     current_user: User = Depends(get_current_user),
 ):
     """获取项目列表（分页）"""
-    from app.models import Version, Document
 
     # 总数
     count_result = await db.execute(select(func.count(Project.id)))

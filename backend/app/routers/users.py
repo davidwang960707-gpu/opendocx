@@ -15,7 +15,6 @@ from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import select, func, or_
 from sqlalchemy.ext.asyncio import AsyncSession
-from pydantic import BaseModel
 
 from app.database import get_db
 from app.models import User, AuditLog
@@ -238,6 +237,6 @@ async def list_audit_logs(
     logs = (await db.execute(query)).scalars().all()
 
     return ApiResponse(data=AuditLogListResponse(
-        items=[AuditLogOut.model_validate(l) for l in logs],
+        items=[AuditLogOut.model_validate(log) for log in logs],
         total=total, page=page, page_size=page_size,
     ))

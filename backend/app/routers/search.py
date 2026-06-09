@@ -4,7 +4,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_db
 from app.models import Document, Version, Project, User, DocumentEmbedding
-from app.schemas import SearchRequest, SearchResult, ApiResponse
+from app.schemas import SearchRequest, ApiResponse
 from app.utils.auth import get_current_user
 from app.services.embed_service import (
     get_embedding,

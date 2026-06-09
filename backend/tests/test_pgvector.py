@@ -10,11 +10,10 @@
 跑法: cd backend && venv/bin/python -m pytest tests/test_pgvector.py -v
 """
 import os
-import uuid
 
 import pytest
 from sqlalchemy import text
-from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
+from sqlalchemy.ext.asyncio import create_async_engine
 
 # 走真 PG (config.py 默认值)
 PG_URL = os.environ.get(
@@ -106,4 +105,4 @@ async def test_vector_type_functional(pg_engine):
         assert rows[0][0] == 1
         assert float(rows[0][2]) < 0.01  # 距离 ≈ 0
         await conn.execute(text("DROP TABLE _test_pgvector"))
-    print(f"\n  vector 类型 + cosine 距离工作正常")
+    print("\n  vector 类型 + cosine 距离工作正常")

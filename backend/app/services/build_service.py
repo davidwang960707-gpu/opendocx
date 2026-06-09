@@ -1,10 +1,8 @@
 """构建服务 — Markdown → 静态 HTML 站（mistune + pygments）"""
 import os
 import re
-import json
 import html
 from datetime import datetime
-from typing import Any
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.models import BuildLog, BuildStatus, Document, Version, Project

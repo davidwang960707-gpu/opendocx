@@ -1,14 +1,15 @@
 """JWT 认证工具"""
-from typing import Optional
-"""JWT 认证工具"""
-from datetime import datetime, timedelta, timezone
-from jose import JWTError, jwt
 import hashlib
 import secrets
+from datetime import datetime, timedelta, timezone
+from typing import Optional
+
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from jose import JWTError, jwt
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.config import get_settings
 from app.database import get_db
 from app.models.user import User

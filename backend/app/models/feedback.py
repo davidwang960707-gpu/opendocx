@@ -1,7 +1,7 @@
 """文档反馈模型 — 点赞/点踩/收藏/评论 统一存储"""
 import uuid
 from datetime import datetime
-from sqlalchemy import String, Text, Integer, Enum as SAEnum, DateTime, ForeignKey, func
+from sqlalchemy import String, Text, Enum as SAEnum, DateTime, ForeignKey, func
 from sqlalchemy.orm import Mapped, mapped_column
 from app.models.base import Base
 import enum

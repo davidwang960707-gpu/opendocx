@@ -1,9 +1,11 @@
-from typing import Optional
 """项目模型"""
 import uuid
 from datetime import datetime
+from typing import Optional
+
 from sqlalchemy import String, Text, DateTime, ForeignKey, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
 from app.models.base import Base
 
 

@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy import select, func, and_
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_db
-from app.models import Project, Document, Version, User, BuildLog
+from app.models import Project, Document, User, BuildLog
 from app.schemas import ApiResponse
 from app.utils.auth import get_current_user
 

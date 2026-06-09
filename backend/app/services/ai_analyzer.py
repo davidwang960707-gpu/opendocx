@@ -160,7 +160,7 @@ def extract_endpoints(content: str) -> list[dict]:
     # 1. 先标记所有"示例 URL"（前后有 http:// 或 https://）的整行，去掉
     cleaned_lines = []
     for line in content.split("\n"):
-        if re.search(r"https?://", line) and not re.search(rf"(?<![\w/])(?:GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS)\s+/", line):
+        if re.search(r"https?://", line) and not re.search(r"(?<![\w/])(?:GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS)\s+/", line):
             # 这行含 URL，但不含"HTTP method + /path"端点签名 → 跳过
             continue
         cleaned_lines.append(line)
@@ -203,7 +203,6 @@ def detect_interface_issues(content: str, endpoints: list[dict], error_codes: li
     # 2. 标准错误码缺失
     if endpoints:
         documented = set(error_codes)
-        missing = _STANDARD_ERROR_CODES - documented
         # 只对 401/403/429/500 这些关键码提示
         critical = {401, 403, 429, 500} - documented
         if critical:
@@ -227,9 +226,9 @@ def compute_health(content: str) -> dict:
     char_count = len(content)
 
     # 1. 标题层次完整性（30 分）
-    h1 = sum(1 for l in lines if re.match(r"^# [^#]", l))
-    h2 = sum(1 for l in lines if re.match(r"^## ", l))
-    h3 = sum(1 for l in lines if re.match(r"^### ", l))
+    h1 = sum(1 for line in lines if re.match(r"^# [^#]", line))
+    h2 = sum(1 for line in lines if re.match(r"^## ", line))
+    h3 = sum(1 for line in lines if re.match(r"^### ", line))
     if h1 == 0:
         heading_score = 5  # 没有 H1 大扣分
     elif h1 > 1:
@@ -249,11 +248,11 @@ def compute_health(content: str) -> dict:
     in_code = False
     code_lines = 0
     code_langs: set[str] = set()
-    for l in lines:
-        if l.strip().startswith("```"):
+    for line in lines:
+        if line.strip().startswith("```"):
             in_code = not in_code
             if in_code:
-                lang = l.strip()[3:].strip()
+                lang = line.strip()[3:].strip()
                 if lang:
                     code_langs.add(lang)
             continue

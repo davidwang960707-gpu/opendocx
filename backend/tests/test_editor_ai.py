@@ -10,7 +10,6 @@ import json
 import pytest
 from fastapi.testclient import TestClient
 from app.main import app
-from app.services.llm import base as llm_base
 
 
 def _parse_sse(text: str) -> list[dict]:

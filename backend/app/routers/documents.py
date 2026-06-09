@@ -7,11 +7,11 @@ import re
 import yaml
 from app.database import get_db
 from app.models import Project, Version, Document, User, VersionStatus, DocStatus
+from pydantic import BaseModel
 from app.schemas import (
     VersionCreate, VersionOut,
     DocumentCreate, DocumentUpdate, DocumentOut, DocumentTreeOut,
-    ApiResponse, PaginatedMeta,
-    ReorderRequest,
+    ApiResponse, ReorderRequest,
 )
 from app.utils.auth import get_current_user, require_role
 from app.utils.audit import write_audit
@@ -98,7 +98,11 @@ async def set_default_version(
         raise HTTPException(status_code=404, detail="版本不存在")
     # 取消同项目其他默认
     others = await db.execute(
-        select(Version).where(Version.project_id == v.project_id, Version.id != vid, Version.is_default == True)
+        select(Version).where(
+            Version.project_id == v.project_id,
+            Version.id != vid,
+            Version.is_default.is_(True),
+        )
     )
     for o in others.scalars().all():
         o.is_default = False
@@ -291,8 +295,7 @@ async def delete_document(
 
 
 # ── 批量发布 (R15 预构建弹窗用) ─────────────────────────────
-from pydantic import BaseModel as _PydBase
-class BatchPublishRequest(_PydBase):
+class BatchPublishRequest(BaseModel):
     """批量发布请求
     - ids: 必填, 至少 1 个 doc id
     - skip_empty: True 时跳过 content 为空的 doc (folder-only 节点不该发布)
