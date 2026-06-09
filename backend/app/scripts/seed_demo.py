@@ -7,17 +7,18 @@ Usage:
 Creates:
     - 1 admin user (admin@opendocx.local / admin123)
     - 1 demo project "Welcome to OpenDocX" with default version v1.0
-    - 2 sample documents:
+    - 3 sample documents:
         * getting-started.md (intro to OpenDocX features)
         * ai-floating-tip-demo.md (showcase AI floating tip)
+        * render-showcase.md (static-site Markdown rendering showcase)
     - 1 default feedback template (empty)
 
-This data is COMPLETELY isolated from Wang Liu's local data
-(Admin的 64 章内容 + 9 项目 + 9 篇文章 全部在他本地 DB, 不在此脚本范围内).
+This data is demo-only and does not include any private local project data.
 """
 import asyncio
 import sys
 from datetime import datetime, timezone
+from pathlib import Path
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -144,6 +145,22 @@ Anthropic, Xiaomi mimo, etc.) for processing. Check `.env` for your
 """
 
 
+def _load_markdown_showcase() -> str:
+    """Load the public Markdown rendering showcase from examples/."""
+    repo_root = Path(__file__).resolve().parents[3]
+    showcase = repo_root / "examples" / "markdown-rendering-showcase.md"
+    if showcase.exists():
+        return showcase.read_text(encoding="utf-8")
+    return """# OpenDocX 静态站渲染能力速查
+
+This fallback appears only when `examples/markdown-rendering-showcase.md` is
+missing. The public repository should include the full showcase file.
+"""
+
+
+MARKDOWN_RENDERING_SHOWCASE_CONTENT = _load_markdown_showcase()
+
+
 # ===== Seed functions =====
 
 
@@ -221,7 +238,7 @@ async def seed_version(db: AsyncSession, project: Project) -> Version:
 async def seed_documents(
     db: AsyncSession, version: Version, admin: User
 ) -> None:
-    """Create 2 demo documents."""
+    """Create demo documents."""
     docs_to_seed = [
         {
             "slug": "getting-started",
@@ -234,6 +251,12 @@ async def seed_documents(
             "title": "AI Floating Tip Demo",
             "content": AI_TIP_DEMO_CONTENT,
             "sort_order": 2,
+        },
+        {
+            "slug": "render-showcase",
+            "title": "OpenDocX 静态站渲染能力速查",
+            "content": MARKDOWN_RENDERING_SHOWCASE_CONTENT,
+            "sort_order": 3,
         },
     ]
 
@@ -275,7 +298,7 @@ async def main() -> None:
     print("=" * 60)
     print()
     print("This script creates demo data in your LOCAL database.")
-    print("Wang Liu's production data is NOT affected.")
+    print("No private local project data is included.")
     print()
 
     async for db in get_db():

@@ -35,7 +35,7 @@ After running `bash scripts/seed_demo.sh`, your local OpenDocX instance has:
 The seed script creates:
 - 1 admin account (above credentials)
 - 1 demo project: "Welcome to OpenDocX"
-- 2 sample documents (Getting Started + AI Floating Tip Demo)
+- 3 sample documents (Getting Started + AI Floating Tip Demo + Markdown Rendering Showcase)
 
 You can log in, explore, and delete this demo project anytime - it won't affect other data.
 
@@ -240,7 +240,7 @@ OpenDocX supports extended Markdown:
 - **GFM** (GitHub Flavored Markdown): tables, task lists, strikethrough, autolinks
 - **Code blocks** with syntax highlighting (13 languages: Python, JavaScript, TypeScript, Bash, JSON, YAML, SQL, HTML, CSS, Markdown, Go, Rust, Java)
 - **Mermaid diagrams**: use ` ```mermaid ` code block
-- **Admonitions** (5 types): `> [!NOTE]`, `> [!TIP]`, `> [!WARNING]`, `> [!DANGER]`, `> [!INFO]`
+- **Admonitions** (7 types): `> [!NOTE]`, `> [!TIP]`, `> [!INFO]`, `> [!IMPORTANT]`, `> [!WARNING]`, `> [!CAUTION]`, `> [!DANGER]`
 - **Images**: drag-drop, paste, or `![alt](url)`
 - **Video & iframes**: embed YouTube / Vimeo / GitHub gists
 - **Math**: KaTeX (optional, not enabled by default)

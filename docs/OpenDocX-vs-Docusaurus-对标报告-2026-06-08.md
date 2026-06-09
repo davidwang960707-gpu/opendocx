@@ -76,7 +76,7 @@ The target isn't "Docusaurus Killer". It's **the last-mile documentation layer f
 | Markdown rendering | remark + rehype | mistune + pygments | **OpenDocX doesn't lose** |
 | Code highlighting | Prism (130+ languages) | Pygments (300+ languages) | **OpenDocX slightly ahead** |
 | Mermaid rendering | Official support | R7, theme-aware | Tie |
-| Admonition (callout blocks) | GitHub style | 5 types, SVG icons, dual theme | Tie |
+| Admonition (callout blocks) | GitHub style | 7 types, SVG icons, dual theme | Tie |
 | H1–H6 typography | Classic blog | 4 font weights (R10) | **OpenDocX slightly ahead** (weight+italic is more stable than size) |
 | Tables / task lists / footnotes / abbreviations / definition lists | Full support | Full support (R7–R10) | Tie |
 | Media (img / video / iframe) | React embedding | img works / video is external link (escape) | **Docusaurus wins** |

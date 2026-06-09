@@ -41,7 +41,7 @@
 - `data/builds/`, `data/uploads/`, `data/docs/` are all in `.gitignore`
 - Your own documents, users, and audit logs stay on your machine
 
-After cloning, run `bash scripts/seed_demo.sh` to create 1 demo project + 2 sample documents in your **own local database**. This is completely isolated from anyone else's data.
+After cloning, run `bash scripts/seed_demo.sh` to create 1 demo project + 3 sample documents in your **own local database**. This is completely isolated from anyone else's data.
 
 See [SECURITY.md](SECURITY.md#data-protection) for full details.
 
@@ -107,7 +107,7 @@ Read our full [competitive analysis](docs/OpenDocX-vs-Docusaurus-对标报告-20
 
 - `POST /api/v1/build/{version_id}` → complete HTML site
 - **Output**: `data/builds/<project>/<version>/`
-- **Supports**: Mermaid, Admonitions (5 types), Pygments (13 languages), images, video, iframes, dark mode, TOC, progress bar
+- **Supports**: Mermaid, Admonitions (7 types), Pygments (13 languages), images, video, iframes, dark mode, TOC, progress bar
 - **Tested**: 143+ HTML files (vibe-coding-book project, 64 chapters + 2 placeholders)
 
 ### 5. Pre-Build Confirmation Modal (v0.1.0 Innovation)
@@ -210,7 +210,7 @@ If you skipped the manual setup and want demo data:
 
 ```bash
 bash scripts/seed_demo.sh
-# Creates: 1 admin + 1 demo project + 2 sample docs
+# Creates: 1 admin + 1 demo project + 3 sample docs
 ```
 
 ---
