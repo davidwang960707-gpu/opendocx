@@ -73,7 +73,7 @@ jobs:
         env:
           PGPASSWORD: postgres
         run: |
-          psql -h localhost -U postgres -d opendocx_test -c "CREATE EXTENSION IF NOT EXISTS pgvector;"
+          psql -h localhost -U postgres -d opendocx_test -c "CREATE EXTENSION IF NOT EXISTS vector;"
 
       - name: Run pytest
         working-directory: backend
