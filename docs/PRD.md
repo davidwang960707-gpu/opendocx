@@ -139,51 +139,49 @@ Version (1) ──→ (N) BuildLog
 | JWT | JSON Web Token，无状态认证机制 |
 | SSE | Server-Sent Events, 后端单向推送流 (编辑器 AI 用) |
 | Infima | Docusaurus 的 CSS 变量 token 体系, 本项目仿建 |
-| Atlas EIDS | 9-color status palette + glassmorphism + dark purple sidebar design system |
+| Atlas EIDS | 9 色状态体系、轻玻璃质感和后台布局 token |
 
 ---
 
-## 6. Current Status (v0.1.0)
+## 6. 当前状态（v0.1.0-alpha）
 
-### 6.1 Current Capabilities
+### 6.1 已具备能力
 
-- **Core CRUD** ✅ Users, projects, documents, versions, RBAC, migrations, seeding
-- **AI Integration** ✅ 6 editor actions with SSE streaming / semantic search via RAG / zero-LLM static analysis
-- **Static Site Generation** ✅ mistune + Pygments + Infima + Atlas 9-color palette + glassmorphism + progress bar / dark mode / TOC / anchor links / responsive
-- **Admin & Audit** ✅ User create/edit/disable/password reset + 49+ audit log entries + AdminRoute RBAC
-- **Design System** ✅ Light sidebar (gray) / dark sidebar (purple) / floating pills / 6-tier breathing rhythm / 9-color status tags
+- **核心增删改查** ✅ 用户、项目、文档、版本、权限、迁移和 Demo seed。
+- **AI 集成** ✅ 6 类编辑动作、SSE 流式返回、语义搜索和无 LLM 静态分析。
+- **静态站构建** ✅ mistune、Pygments、主题 token、阅读进度、深浅主题、目录和锚点。
+- **管理与审计** ✅ 用户创建、编辑、禁用、密码重置、审计日志和管理员路由保护。
+- **设计体系** ✅ 浅色侧栏、项目主题色、状态标签、表格密度和轻动效基础。
 
-### 6.2 Feature Maturity
+### 6.2 成熟度
 
-| Area | Status | Notes |
+| 模块 | 状态 | 说明 |
 |---|---|---|
-| Backend API | Mature | FastAPI + SQLAlchemy 2.0, 10 test files, 45+ endpoints |
-| Frontend UI | Mature | React 18 + Ant Design 5, 11 pages, Zustand state |
-| AI Capabilities | Functional | LLM streaming + embedding search, 6 editor actions |
-| Build Pipeline | Functional | 1820-line `build_service.py`, mistune + Pygments + Mermaid |
-| Test Coverage | Solid | 10 backend test files, 71+ tests |
-| Deployment | Ready | Docker Compose + Nginx, full CI/CD |
-| Design System | Strong | Atlas EIDS 9-color palette + 6-tier breathing rhythm |
-| Documentation | Strong | USER-GUIDE + API + ARCHITECTURE + PRD + ROADMAP |
+| 后端 API | 较成熟 | FastAPI + SQLAlchemy 2，核心接口已覆盖 |
+| 前端 UI | 可用 | React + Ant Design，后台主链路已完成 |
+| AI 能力 | 可用 | LLM 流式返回、向量检索、编辑器动作 |
+| 构建链路 | 可用 | `build_service.py` 负责 Markdown 到静态站 |
+| 测试覆盖 | 需增强 | 后端已有测试，前端测试仍需补齐 |
+| 部署 | 可试用 | Docker Compose 与 Nginx 配置已提供 |
+| 文档 | 可开源 | 中文 README、用户指南、架构、API、路线图已准备 |
 
-### 6.3 Roadmap Highlights
+### 6.3 路线图摘要
 
-See [ROADMAP.md](ROADMAP.md) for full details. Key upcoming features:
+完整计划见 [ROADMAP.md](ROADMAP.md)。关键方向：
 
-- **AI in the published static site** (chat widget, per-page explain) - v0.2.0
-- **MDX support** (Markdown + JSX, like Docusaurus) - v0.3.0
-- **Real-time collaboration** (multi-user editing with OT/CRDT) - v0.3.0
-- **Workflow improvements** (review, approval, comments, track changes) - v0.3.0
-- **Better search** (BM25 + vector hybrid) - v0.2.0
-- **Live demo URL** (public, free) - v0.2.0
+- **静态站 AI 能力**：读者侧问答、页面解释和反馈增强。
+- **媒体资产管理**：图片、GIF、视频、附件上传与复用。
+- **更强搜索**：关键词与向量混合检索。
+- **协作流程**：评审、审批、评论和变更记录。
+- **公开演示站**：降低首次试用成本。
 
-### 6.4 Known Limitations (v0.1.0)
+### 6.4 已知限制
 
-- **No real-time collaboration**: Multiple users editing the same document may overwrite each other
-- **No MDX support**: Only standard Markdown (no JSX in docs)
-- **Basic search**: Vector search only, no keyword-based fallback
-- **Single-language static site**: One project per language (multi-language static sites planned)
-- **No refresh tokens**: Re-login required after 7 days
-- **No webhook integrations**: External systems can't subscribe to document changes
+- 暂无实时协同，多人编辑同一文档时可能覆盖。
+- 暂不支持 MDX，只支持标准 Markdown 与扩展语法。
+- 搜索能力仍偏基础。
+- 静态站多语言建议先用不同项目或版本管理。
+- 暂无 refresh token，token 过期后需要重新登录。
+- 暂无 webhook 集成。
 
-These are tracked in [ROADMAP.md](ROADMAP.md) and will be addressed in v0.2.0 / v0.3.0.
+这些限制会在 v0.2.0 和 v0.3.0 继续处理。

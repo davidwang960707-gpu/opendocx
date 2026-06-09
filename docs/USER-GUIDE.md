@@ -1,496 +1,197 @@
-# OpenDocX User Guide
+# OpenDocX 用户指南
 
-> A complete guide to using OpenDocX - from your first login to advanced workflows.
-> Last updated: 2026-06-08 · v0.1.0
+这份指南面向第一次使用 OpenDocX 的用户，覆盖从登录、创建项目、编辑文档到构建静态站的完整流程。
 
----
+## 1. 登录
 
-## Table of Contents
+执行 `bash scripts/seed_demo.sh` 后，本地环境会创建默认管理员：
 
-1. [Getting Started](#1-getting-started)
-2. [Keyboard Shortcuts](#2-keyboard-shortcuts)
-3. [AI Assistant](#3-ai-assistant)
-4. [AI Floating Tip](#4-ai-floating-tip)
-5. [Command Palette](#5-command-palette)
-6. [Projects & Versions](#6-projects--versions)
-7. [Documents](#7-documents)
-8. [Build & Publish](#8-build--publish)
-9. [Pre-Build Confirmation](#9-pre-build-confirmation)
-10. [Static Site Output](#10-static-site-output)
-11. [Admin & Audit](#11-admin--audit)
-12. [Settings](#12-settings)
+```text
+admin@opendocx.local / admin123
+```
 
----
+前端地址：
 
-## 1. Getting Started
+```text
+http://localhost:3077
+```
 
-### First Login
+Docker 部署时同样使用该地址。
 
-After running `bash scripts/seed_demo.sh`, your local OpenDocX instance has:
+## 2. 首页
 
-- **URL**: `http://localhost:3077` (Vite dev) or `http://localhost` (Docker)
-- **Email**: `admin@opendocx.local`
-- **Password**: `admin123`
+登录后进入后台首页。首页用于快速查看：
 
-The seed script creates:
-- 1 admin account (above credentials)
-- 1 demo project: "Welcome to OpenDocX"
-- 3 sample documents (Getting Started + AI Floating Tip Demo + Markdown Rendering Showcase)
+- 项目数量、文档数量、发布状态和最近构建。
+- 最近更新的项目与文档。
+- 待处理反馈、审计动向和常用入口。
 
-You can log in, explore, and delete this demo project anytime - it won't affect other data.
+![后台首页](screenshots/01-dashboard.png)
 
-### The Three Main Areas
+## 3. 项目
 
-After login, you land on the **Dashboard** with these areas:
+项目是 OpenDocX 的核心工作空间。一个项目通常对应一个产品、一个开源库、一个客户交付包或一套业务手册。
 
-| Area | Purpose |
-|---|---|
-| **Projects** | Browse / create / edit documentation projects |
-| **Documents** | Edit Markdown with live preview, AI assistance, version control |
-| **Published** | Browse generated static sites and download them for deployment |
+在项目页可以：
 
----
+- 新建项目。
+- 编辑项目名称、标识、描述和主题色。
+- 进入项目详情。
+- 查看文档数量、版本、构建状态。
+- 删除或归档项目。
 
-## 2. Keyboard Shortcuts
+![项目列表](screenshots/02-projects.png)
 
-| Shortcut | Action | Where |
-|---|---|---|
-| `Cmd K` / `Ctrl K` | Open command palette - search docs / projects / settings | Anywhere |
-| `Cmd N` | Jump to "New Project" | Anywhere |
-| `Cmd U` | Jump to upload Markdown | Anywhere |
-| `Cmd B` | Jump to "Build & Publish" for current project | Anywhere |
-| `Cmd Shift A` | Show AI floating tip (after selecting text in editor) | Editor |
-| `Cmd Shift F` | Rewrite selection to be more formal | Editor (with selection) |
-| `Cmd Shift S` | Rewrite selection to be more concise | Editor (with selection) |
-| `Cmd Shift N` | Rewrite selection to be friendlier | Editor (with selection) |
-| `Esc` | Close any popup (command palette, drawer, modal) | Anywhere |
+## 4. 版本
 
-> Mac users: use `Cmd`. Windows/Linux: use `Ctrl`.
+每个项目至少有一个默认版本。版本用于承载同一项目在不同阶段的文档集合，例如：
 
----
+- `v1.0`
+- `v1.1`
+- `internal`
+- `public-alpha`
 
-## 3. AI Assistant
+v0.1.0-alpha 已有版本数据结构，静态站构建默认使用当前版本。
 
-OpenDocX uses AI (LLM) to help you write and edit documentation. The AI is configured via your `.env` file - you can use OpenAI, Anthropic, or any OpenAI-compatible service (e.g., Xiaomi mimo, local Ollama).
+## 5. 文档树
 
-### AI Capabilities
+文档树支持文件夹和文档两类节点。
 
-OpenDocX offers AI in two main places:
+- 文件夹用于组织结构。
+- 文档用于承载 Markdown 内容。
+- 文档可以发布或保持草稿。
+- 构建静态站时只输出已发布文档。
 
-1. **AI Floating Tip** - select text in editor, get instant AI actions
-2. **AI Panel** (right sidebar in editor) - longer-form AI assistance
+当前版本保留拖拽排序和层级调整。对于复杂目录，后续会增加更稳定的“移动到文件夹”操作，降低拖拽误差。
 
-### Configuration
+## 6. Markdown 编辑
 
-Edit `.env` in your project root:
+![文档编辑](screenshots/03-editor.png)
+
+编辑页采用三栏结构：
+
+- 左侧：文档树。
+- 中间：Markdown 编辑器。
+- 右侧：预览和 AI 辅助面板。
+
+后台编辑器的目标是高效录入和快速修改，不追求与静态站完全一致的阅读排版。静态站渲染链会提供更完整、更美观的阅读体验。
+
+支持的 Markdown 能力包括：
+
+- 标题、段落、引用、列表、链接。
+- 表格、任务列表、删除线。
+- 代码块和语法高亮。
+- 图片、GIF、视频链接。
+- 信息、提示、警告、危险等提示块。
+- Mermaid 与公式的容器级美化。
+
+完整示例见：
+
+```text
+examples/markdown-rendering-showcase.md
+```
+
+## 7. AI 辅助
+
+OpenDocX 支持两类 AI 辅助：
+
+- 选中文本后的浮层操作。
+- 右侧 AI 面板的上下文辅助。
+
+常见操作：
+
+- 续写。
+- 改写。
+- 摘要。
+- 翻译。
+- 解释。
+- 问答。
+
+AI 服务通过 `.env` 配置。可以使用 OpenAI，也可以使用兼容 OpenAI API 风格的服务。
+
+## 8. 发布状态
+
+文档通常有两种状态：
+
+- 草稿：只在后台可见，不进入静态站。
+- 已发布：构建静态站时会输出。
+
+构建前，OpenDocX 会展示发布确认，帮助你检查哪些文档会进入站点、哪些文档仍然是草稿。
+
+## 9. 构建静态站
+
+点击构建后，系统会从数据库读取已发布文档，生成纯静态站点。
+
+输出目录通常是：
+
+```text
+data/builds/<project>/<version>/
+```
+
+静态站包含：
+
+- HTML 页面。
+- CSS 主题与阅读样式。
+- 少量前端脚本。
+- 搜索入口、主题切换、阅读进度。
+- 反馈入口。
+
+![已发布站点](screenshots/04-published.png)
+
+## 10. 反馈审核
+
+静态站读者可以提交反馈。后台反馈页用于：
+
+- 查看反馈内容。
+- 查看来源文档。
+- 判断是否垃圾反馈。
+- 标记处理状态。
+
+v0.1.0-alpha 已具备基础审核能力，后续会增强筛选、导出和通知。
+
+## 11. 用户管理与审计
+
+管理员可以进入用户管理页维护用户：
+
+- 新建用户。
+- 修改角色。
+- 启用或禁用账号。
+- 重置密码。
+
+审计日志会记录关键操作，例如登录、项目修改、文档发布、构建、用户变更等。
+
+![审计日志](screenshots/05-admin-audit.png)
+
+## 12. 常见问题
+
+### 登录失败怎么办？
+
+先确认已经执行：
 
 ```bash
-LLM_PROVIDER=openai              # openai | hermes
-LLM_BASE_URL=https://api.openai.com/v1
-LLM_API_KEY=sk-your-key-here
-LLM_MODEL=gpt-4o-mini
-LLM_TIMEOUT=60
+bash scripts/seed_demo.sh
 ```
 
-After changing, restart the backend:
+默认账号是：
+
+```text
+admin@opendocx.local / admin123
 ```
 
-After changing, restart the backend:
-```bash
-bash backend/scripts/start-backend.sh
-```
+如果你改过密码，可以重新清理本地数据库或在数据库里重置该用户。
 
----
+### 为什么后台预览和静态站效果不完全一样？
 
-## 4. AI Floating Tip
+这是有意设计。后台编辑器强调编辑效率、响应速度和工具栏操作；静态站强调最终阅读体验、代码高亮、提示块、表格、媒体和版式。
 
-The fastest way to use AI: select any text in the Markdown editor.
+### 可以多人同时编辑吗？
 
-### How to Use
+v0.1.0-alpha 还没有实时协同。多人编辑同一文档时，以最后一次保存为准。建议通过版本或分工避免冲突。
 
-1. **Select text** with your mouse (drag to highlight)
-2. Wait for the floating tip to appear near your selection
-3. Click an action, or press the hotkey
+### 可以直接部署静态站吗？
 
-### Available Actions
+可以。构建产物是纯静态文件，可以放到 Nginx、对象存储、GitHub Pages 或任意静态托管服务中。
 
-| Action | What it does |
-|---|---|
-| **Rewrite** | Improve clarity while keeping meaning |
-| **Continue** | Keep writing in the same style |
-| **Translate** | Translate to English (more languages coming) |
-| **Summarize** | Compress long paragraphs into 1-2 sentences |
-| **Fix** | Correct grammar and typos |
-| **Change Tone** | Switch between formal / friendly / concise |
-| **More Formal** | One-click formal rewrite |
-| **More Concise** | One-click shorter rewrite |
-| **Friendlier** | One-click warmer rewrite |
+### 支持英文项目吗？
 
-### Review and Apply
-
-After you trigger an action:
-- The AI response streams in real-time (you see words appear as the model generates)
-- A **review modal** appears with two buttons:
-  - **Accept & Replace** - replaces your selected text with the AI's output
-  - **Reject** - discards the AI output, keeps your original
-
-### Selection-Aware Q&A (v0.1.0+)
-
-The AI can answer questions about your **selection** specifically, without pulling from the rest of the document. For example:
-
-- Select a paragraph about "API rate limits"
-- Open the AI tip
-- Type: "what's the 429 status code meaning?"
-- The AI answers based on your selection, not the whole document
-
-This is useful when you want focused, contextual answers.
-
----
-
-## 5. Command Palette
-
-Press `Cmd K` (or `Ctrl K`) anywhere to open the command palette.
-
-### What You Can Do
-
-- **Search**: Find documents, projects, versions, settings
-- **Navigate**: Jump to any page in the app
-- **Create**: New project, new document, new version
-- **Actions**: Switch theme, log out, view audit logs
-
-The search uses **semantic embeddings** (via sentence-transformers), so you can search by meaning, not just exact keywords. For example, searching "rate limit" will find docs containing "throttling" or "429 status code".
-
----
-
-## 6. Projects & Versions
-
-### What is a Project?
-
-A **project** is a documentation workspace. Each project has:
-- A name and description
-- One or more **versions** (e.g., v1.0, v2.0)
-- A list of **users** with permissions (admin / editor / viewer)
-- A **brand color** and logo (for the static site output)
-
-### What is a Version?
-
-A **version** is a snapshot of your documentation at a point in time. Common use cases:
-- **Product versions**: v1.0, v1.1, v2.0 - one version per release
-- **Stage versions**: draft, beta, stable - same docs at different maturity levels
-
-Each version has its own:
-- Set of documents
-- Static site output
-- Build history
-
-### Creating a New Project
-
-1. Go to **Projects** in the sidebar
-2. Click **New Project** in the top-right
-3. Fill in:
-   - Name (required)
-   - Slug (URL-friendly, auto-generated, editable)
-   - Description (optional)
-   - Brand color (default: indigo)
-4. Click **Create**
-
-A default version `v1.0` is created automatically.
-
-### Project Statuses
-
-| Status | Meaning |
-|---|---|
-| `active` | Default, working state |
-| `paused` | Temporarily disabled, not shown in default lists |
-| `draft` | Not yet ready for public viewing |
-| `archived` | Old, hidden from main views |
-
----
-
-## 7. Documents
-
-### Document Tree
-
-The left sidebar of any project shows the **document tree**:
-- **Folders** (gray icon) can contain documents and sub-folders (unlimited nesting)
-- **Documents** (file icon) are individual Markdown files
-- **Status badges** next to each document:
-  - Green = published
-  - Orange = draft
-  - Gray = archived
-  - Red = error (e.g., failed build)
-
-Click any document to open it in the editor.
-
-### The Editor
-
-OpenDocX uses a **three-column editor**:
-
-1. **Left**: Document tree (collapsible folders, status indicators)
-2. **Center**: Markdown editor with live preview
-   - Edit Markdown in the top half
-   - See rendered HTML in the bottom half
-   - Scroll syncs between them
-3. **Right**: AI panel (longer-form AI assistance, separate from floating tip)
-
-### Markdown Features
-
-OpenDocX supports extended Markdown:
-
-- **GFM** (GitHub Flavored Markdown): tables, task lists, strikethrough, autolinks
-- **Code blocks** with syntax highlighting (13 languages: Python, JavaScript, TypeScript, Bash, JSON, YAML, SQL, HTML, CSS, Markdown, Go, Rust, Java)
-- **Mermaid diagrams**: use ` ```mermaid ` code block
-- **Admonitions** (7 types): `> [!NOTE]`, `> [!TIP]`, `> [!INFO]`, `> [!IMPORTANT]`, `> [!WARNING]`, `> [!CAUTION]`, `> [!DANGER]`
-- **Images**: drag-drop, paste, or `![alt](url)`
-- **Video & iframes**: embed YouTube / Vimeo / GitHub gists
-- **Math**: KaTeX (optional, not enabled by default)
-
-### Saving
-
-OpenDocX auto-saves every 30 seconds. You can also:
-- `Cmd S` to save manually
-- The status bar at the bottom shows "Saved" / "Saving..." / "Unsaved changes"
-
-### Document Statuses
-
-| Status | Meaning |
-|---|---|
-| `draft` | Being edited, not in static site output |
-| `published` | Included in static site output |
-| `archived` | Hidden from views, kept for history |
-
----
-
-## 8. Build & Publish
-
-### What is "Build"?
-
-The **Build** button generates a complete **static HTML site** from your database documents. The output is in `data/builds/<project>/<version>/` and can be:
-- Opened locally by double-clicking `index.html`
-- Deployed to any static host (Vercel, Netlify, GitHub Pages, S3, Nginx)
-
-### How to Build
-
-1. Go to your project
-2. Click **Build** in the top-right
-3. **Pre-Build Confirmation modal** appears (see next section)
-4. Review and confirm
-5. Wait for build to complete (typically 5-30 seconds)
-6. Click **Open Static Site** to preview
-7. Click **Download** to get a ZIP
-
-### Build Output
-
-After a successful build, you have:
-- `data/builds/<project>/<version>/index.html` - landing page
-- `data/builds/<project>/<version>/docs/<slug>/index.html` - one HTML per document
-- `data/builds/<project>/<version>/static/css/tokens.css` - design tokens
-- `data/builds/<project>/<version>/static/css/main.css` - main styles
-- `data/builds/<project>/<version>/static/images/` - all images
-- `data/builds/<project>/<version>/sitemap.xml` - for SEO
-
-### Build Performance
-
-- Small project (10 docs): 2-5 seconds
-- Medium project (50 docs): 10-20 seconds
-- Large project (200+ docs): 30-60 seconds
-
----
-
-## 9. Pre-Build Confirmation
-
-Before building, OpenDocX shows a **Pre-Build Modal** so you can:
-
-1. **See all your documents** in a tree
-2. **See statistics**:
-   - Total documents
-   - Published count
-   - Draft count
-   - Empty content count
-3. **Publish drafts** before building (so they appear in static site)
-4. **Bulk publish** multiple drafts at once
-
-### Modal Components
-
-**Top stats bar**:
-```
-Total: 14 · Published: 10 · Draft: 4 · Empty: 0
-```
-
-**Action buttons**:
-- **Select All Unpublished** - check all draft checkboxes
-- **Clear Selection** - uncheck everything
-- **Bulk Publish Selected (N)** - publish all checked drafts at once
-
-**Per-document actions**:
-- **Publish** - publish this single draft
-- **Save & Publish** - if you have unsaved changes, this saves + publishes in one step
-
-**Bottom buttons**:
-- **Start Build** (primary) - proceed with build
-- **Cancel** - close modal without building
-
-### Why This Matters
-
-Without this modal, you might click "Build" and forget to publish your drafts - then the static site is missing pages. The modal catches this **before** the build, not after.
-
----
-
-## 10. Static Site Output
-
-### Deployment Options
-
-Once you've built, you can deploy the `data/builds/<project>/<version>/` folder to:
-
-| Host | Best for |
-|---|---|
-| **Vercel** | Easiest, free tier, auto-deploy from git |
-| **Netlify** | Similar to Vercel, great DX |
-| **GitHub Pages** | Free for public repos, no build step needed |
-| **AWS S3 + CloudFront** | Enterprise, scalable, pay-as-you-go |
-| **Nginx (self-hosted)** | Full control, your own server |
-| **Any static host** | Just upload the folder - no server-side code needed |
-
-### Self-Hosting Example (Nginx)
-
-```bash
-# After build, copy output to nginx
-sudo cp -r data/builds/my-project/v1.0/* /var/www/html/
-
-# nginx config (/etc/nginx/sites-enabled/default)
-server {
-    listen 80;
-    server_name docs.example.com;
-    root /var/www/html;
-    index index.html;
-    location / { try_files $uri $uri/ /index.html; }
-}
-```
-
-### Themes
-
-The static site supports both **light** and **dark** themes. A toggle button in the top-right switches between them. The user's preference is saved in `localStorage`.
-
-Theme is determined by the user's OS preference on first visit, then they can override.
-
-### Features Included in Static Site
-
-- Full-text search (client-side, instant)
-- Sidebar navigation with collapsible folders
-- Code block syntax highlighting
-- Mermaid diagram rendering
-- Admonition blocks
-- Image lazy loading
-- Mobile responsive (tested on phones / tablets / desktop)
-- SEO optimized (meta tags, sitemap.xml, Open Graph)
-- Zero external dependencies (no JS framework at runtime)
-
----
-
-## 11. Admin & Audit
-
-### User Roles
-
-| Role | Permissions |
-|---|---|
-| **admin** | Full access: manage users, edit any doc, build, view audit logs |
-| **editor** | Edit assigned docs, cannot manage users |
-| **viewer** | Read-only access |
-
-### User Management (Admin Only)
-
-Go to **Settings → Users** (admin only) to:
-- View all users
-- Create new user
-- Change user role
-- Reset password
-- Disable / re-enable user
-
-### Audit Logs
-
-Every administrative action is logged:
-- Who did what (`actor_email`)
-- When (timestamp)
-- What changed (before / after)
-- From which IP
-
-Go to **Settings → Audit** (admin only) to view logs. Filter by:
-- Date range
-- Action type (create / update / delete / login)
-- User
-- IP
-
-Audit logs are **append-only** - you cannot edit or delete them. They are required for compliance in many industries (GDPR, SOC 2, HIPAA).
-
----
-
-## 12. Settings
-
-### Profile
-
-- **Name**: Display name (shown in comment threads, audit logs)
-- **Email**: Used for login (cannot be changed without admin)
-- **Avatar**: Profile picture (upload or use Gravatar)
-
-### Change Password
-
-Go to **Settings → Security**:
-1. Enter old password
-2. Enter new password (min 8 characters, recommend 12+ with mixed case + numbers + symbols)
-3. Confirm new password
-4. Click **Update Password**
-
-### Preferences
-
-- **Theme**: Light / Dark / System (auto)
-- **Language**: English / 中文 (interface only, not static site content)
-- **Timezone**: For displaying timestamps
-- **Editor font size**: Small / Medium / Large
-
----
-
-## Common Questions
-
-### Q: How do I add a new language to the static site?
-
-OpenDocX generates one static site per project. For multi-language, create one project per language (e.g., `my-project-en`, `my-project-zh`). See [docs/ROADMAP.md](ROADMAP.md#i18n) for the rationale.
-
-### Q: Can I edit the same doc in two browsers at once?
-
-Yes, but the last save wins. OpenDocX doesn't have real-time collaborative editing (no operational transform). If both users save, the later save overwrites the earlier one. Use branches (separate versions) for parallel work.
-
-### Q: How do I delete a project?
-
-**Project card → ⚙️ Settings → Delete Project** (admin only). This is a soft delete - the project is archived, not removed. To permanently delete, contact your instance admin.
-
-### Q: Why is my AI tip not appearing?
-
-Check:
-1. Backend is running (`bash backend/scripts/start-backend.sh`)
-2. `.env` has valid `LLM_API_KEY` (not `***` placeholder)
-3. `LLM_BASE_URL` is reachable from your network
-4. You selected at least 1 character of text
-
-If still not working, check backend logs for errors.
-
-### Q: How do I deploy the static site to my own server?
-
-1. Build the project (see Section 8)
-2. Copy `data/builds/<project>/<version>/*` to your server's web root
-3. Configure your web server (Nginx / Apache) to serve the folder
-4. Test by visiting your domain
-
-For HTTPS, use Let's Encrypt (free) or your hosting provider's cert.
-
----
-
-## Getting Help
-
-- **Documentation**: This file
-- **Issues**: [GitHub Issues](https://github.com/wangliu/opendocx/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/wangliu/opendocx/discussions)
-- **Email**: support@opendocx.dev (placeholder, TBD)
-
----
-
-<sub>Last revised: 2026-06-08 · Version: v0.1.0</sub>
+可以。OpenDocX 后台界面以中文为主，文档内容可以是任意语言。多语言站点建议在 v0.1.0-alpha 先用不同项目或不同版本管理。

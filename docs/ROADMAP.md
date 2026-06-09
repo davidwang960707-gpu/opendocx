@@ -1,282 +1,115 @@
-# OpenDocX Roadmap
+# OpenDocX 路线图
 
-> What's done, what's next, and where we're going.
-> Last updated: 2026-06-08 · Version: v0.1.0
+OpenDocX 的目标不是成为另一个通用静态站生成器，而是成为 AI / Vibe Coding 项目的文档管理、项目手册和发布工作台。
 
----
+## 产品定位
 
-## Project Philosophy
+AI 可以很快生成代码，但项目真正交付前还缺这些东西：
 
-OpenDocX exists because **writing documentation is hard, and most tools make it harder**.
+- 清晰的项目手册。
+- 可维护的文档树。
+- 可发布的静态站。
+- 读者反馈入口。
+- 文档变更审计。
+- 从草稿到发布的确认流程。
 
-Our principles:
-- **AI is a tool, not a replacement** - we help you write, not write for you
-- **Web-native** - no Git, no local files, no command line required
-- **Real-time collaboration-ready** - the data model supports it (multi-version, audit log)
-- **Open by default** - Apache 2.0 licensed, no enterprise tier
+OpenDocX 聚焦这条最后一公里。
 
----
+## v0.1.0-alpha 已完成
 
-## Current Status: v0.1.0 (Released)
+- 登录、项目、版本、文档树。
+- Markdown 编辑和预览。
+- AI 浮层与 AI 面板。
+- 发布前确认。
+- 静态站构建。
+- 反馈审核。
+- 用户管理。
+- 审计日志。
+- Docker Compose。
+- Demo seed 与中文开源文档。
 
-**v0.1.0** is the first public release. It includes:
-- All core features (Markdown editor, AI integration, build & publish)
-- Pre-Build Confirmation modal (v0.1.0 innovation)
-- Selection-aware AI Q&A (v0.1.0 innovation)
-- Full admin panel with audit logs
-- Docker Compose for one-command setup
-- 58+ screenshots, complete user guide
+## v0.2.0：开源体验增强
 
-**Code stats (v0.1.0):**
-- 6,567 lines Python backend
-- 8,897 lines TypeScript frontend
-- 10 backend test files
-- 80 commits in the main branch
-- 11 projects / 73+ HTML files generated
+目标：让第一次接触项目的人 10 分钟内跑起来，并能看懂核心价值。
 
----
+计划：
 
-## Short-term (v0.2.0 - Q3 2026)
+- 完善 README 和截图。
+- 增加更多中文 Demo 文档。
+- 增强静态站首页、目录、阅读进度和移动端体验。
+- 优化审计日志、反馈列表的动态列宽和筛选。
+- 增加基础前端测试。
+- 提供公开演示站。
 
-### Static Site AI Features
+## v0.3.0：Markdown 与媒体能力
 
-**Goal**: Bring AI capabilities to the published static site, not just the editor.
+目标：让 OpenDocX 可以承载更真实的产品文档。
 
-- **AI chat widget** in the bottom-right of the static site
-- **Per-page "explain this"** button
-- **AI-powered search** with semantic ranking
-- **Visitor feedback collection** (already in editor, extend to static site)
+计划：
 
-**Why this matters**: Currently OpenDocX helps authors write. After publishing, readers have no AI help. We're closing that gap.
+- 图片上传、选择、复用和管理。
+- GIF、视频、附件的资产管理。
+- 公式完整渲染。
+- Mermaid 完整渲染。
+- 更丰富的提示块和代码块主题。
+- 静态站 SEO、站点地图和元信息。
 
-**Estimated effort**: 1 month
+## v0.4.0：团队协作
 
-### Live Demo URL
+目标：从个人工具走向小团队工作台。
 
-**Goal**: A public URL where anyone can try OpenDocX without installing.
+计划：
 
-- Deploy to Vercel (frontend) + Railway (backend) + Supabase (PostgreSQL)
-- Free tier for everyone
-- Custom domain `demo.opendocx.dev`
+- 项目成员权限。
+- 文档审批流。
+- 发布权限控制。
+- 版本差异对比。
+- 文档变更记录。
+- 审计日志导出。
 
-**Why this matters**: The #1 reason people don't try open source projects is friction. A live demo removes that.
+## v0.5.0：AI 工作流深化
 
-**Estimated effort**: 1 week
+目标：让 AI 不只是“写一句”，而是参与文档质量提升。
 
-### Hacker News Launch
+计划：
 
-**Goal**: Get on Hacker News front page.
+- 项目上下文感知写作。
+- 文档质量评分。
+- 缺失章节建议。
+- 术语一致性检查。
+- 从代码/API 自动生成文档草稿。
+- 面向静态站读者的 AI 问答入口。
 
-- Write a "Show HN" post: "Show HN: OpenDocX - Open-source AI-native doc platform"
-- Target: top 10 of the day
-- Expected: 500-2000 stars in 1 week
+## v1.0.0：稳定版本
 
-**Why this matters**: Distribution > development. We've built the product; now we need users.
+目标：
 
-**Estimated effort**: 1 day (post + landing page prep)
+- API 稳定。
+- 测试覆盖关键路径。
+- 生产部署文档完整。
+- 多用户权限可用于真实团队。
+- 静态站阅读体验接近成熟文档框架。
 
-### Better Search
+## 与 Docusaurus 的关系
 
-**Goal**: Move from basic embedding search to hybrid (keyword + semantic).
+Docusaurus 是成熟的文件型静态站生成器。OpenDocX 不打算在 v0.x 阶段硬碰它的生态，而是走不同方向：
 
-- Add BM25 keyword search (Postgres `ts_vector`)
-- Combine with vector search using reciprocal rank fusion
-- Highlight matched terms
+- Docusaurus 适合已经有 Git 文档流程的团队。
+- OpenDocX 适合需要 Web 管理后台、AI 辅助、发布确认、反馈和审计的项目。
 
-**Why this matters**: Vector search alone misses exact technical terms. Hybrid is the proven approach.
+更完整的分析见：
 
-**Estimated effort**: 1 week
+```text
+docs/OpenDocX-vs-Docusaurus-对标报告-2026-06-08.md
+```
 
----
+## 贡献方向
 
-## Medium-term (v0.3.0 - Q4 2026)
+欢迎优先贡献这些内容：
 
-### MDX Support
-
-**Goal**: Allow JSX in Markdown.
-
-- Parse MDX (Markdown + JSX)
-- Sandbox component execution
-- Provide pre-built components (`<Note>`, `<Warning>`, `<YouTubeEmbed>`)
-- Allow user-defined components via project config
-
-**Why this matters**: MDX is Docusaurus's killer feature. We're behind on this.
-
-**Estimated effort**: 3 weeks
-
-### Real-time Collaboration
-
-**Goal**: Multiple users editing the same document at the same time.
-
-- Operational Transform (OT) or CRDT (Yjs)
-- Show other users' cursors
-- Live character-level sync
-
-**Why this matters**: The #1 user request (in informal feedback) is "can I collaborate with my team?"
-
-**Estimated effort**: 2 months (this is hard)
-
-### Workflow Improvements
-
-**Goal**: Support real editorial workflows.
-
-- Document review / approval
-- Comment threads
-- Track changes (like Microsoft Word)
-- Lock documents when someone is editing
-
-**Estimated effort**: 1 month
-
-### Performance: Build Time
-
-**Goal**: Build 200-doc projects in under 10 seconds.
-
-- Parallel document processing
-- Cache Mermaid renders
-- Incremental builds (only changed docs)
-
-**Estimated effort**: 2 weeks
-
----
-
-## Long-term (v1.0 - 2027)
-
-### v1.0 Quality Bar
-
-For v1.0, we want:
-- **1000+ GitHub stars**
-- **10+ real external users** running OpenDocX in production
-- **99.9% uptime** for the demo URL (monitored)
-- **Complete API stability** (no breaking changes after v1.0)
-- **Comprehensive documentation** (all features documented)
-- **Performance budgets** met (build < 10s for 200 docs, p99 API < 200ms)
-
-### v1.0+ Features
-
-- **Multi-tenant**: One OpenDocX instance, many organizations
-- **SSO**: OAuth, SAML, OIDC
-- **Audit log export**: For compliance audits
-- **Webhooks**: Notify external systems on document changes
-- **API rate limits per user**: Not just per IP
-- **GraphQL API**: As alternative to REST
-- **Mobile app**: iOS + Android (read-only first)
-
-### Vision: AI-First Documentation
-
-Long-term, we believe documentation should be:
-- **Conversational**: Chat with your docs, not just read
-- **Predictive**: AI suggests what to document next based on code changes
-- **Multi-modal**: Images, video, interactive demos, not just text
-- **Auto-maintained**: AI keeps docs in sync with code (the holy grail)
-
-We're not there yet, but every release moves us closer.
-
----
-
-## Why Not Compete With Docusaurus?
-
-We don't. Docusaurus is the **authoring tool of choice** for mature file-based static sites. OpenDocX is the **documentation and publishing workspace for AI-built projects**.
-
-Our positioning: "Use Docusaurus if you already have a Git-native docs workflow. Use OpenDocX if your AI-built project needs manuals, publishing, feedback, and handoff workflows."
-
-Read our full [competitive analysis](OpenDocX-vs-Docusaurus-对标报告-2026-06-08.md) (1万字, 7段, 10458 bytes).
-
----
-
-## Feature Comparison
-
-| Feature | OpenDocX v0.1.0 | Docusaurus 3.x | Notion |
-|---|---|---|---|
-| Markdown editor in browser | Yes | No (file-based) | Yes |
-| AI floating tip on selection | Yes | Plugin needed | Yes (Notion AI) |
-| Pre-Build Confirmation modal | Yes (v0.1.0) | No | N/A |
-| Build to static site | Yes | Yes (its main feature) | No |
-| Multi-version support | Yes | Yes | N/A |
-| Full-text search | Basic (embedding) | Algolia (free tier) | Yes |
-| Multi-language | Per-project | Native | Yes |
-| Database-driven | Yes (PostgreSQL) | No (Markdown files) | Yes |
-| Audit logs | Yes (all admin actions) | No | Yes |
-| Real-time collaboration | No (planned v0.3.0) | No (planned) | Yes |
-| MDX / JSX | No (planned v0.3.0) | Yes | No |
-| Open source | Apache 2.0 | MIT | No (proprietary) |
-
----
-
-## Success Metrics (v1.0 Goals)
-
-| Metric | Target | Current (v0.1.0) |
-|---|---|---|
-| GitHub stars | 1000+ | 0 (not yet launched) |
-| Active installations | 50+ | 0 |
-| External contributors | 10+ | 0 |
-| Production users (in business) | 5+ | 0 |
-| Public demo uptime | 99.9% | N/A |
-| Issues closed per month | 30+ | N/A |
-
----
-
-## Decision Log
-
-Major decisions and their rationale:
-
-### Why Apache 2.0 over MIT?
-
-- Explicit patent grant protects users from infringement claims
-- NOTICE file requirement enables clean attribution chains
-- Trademark clause lets us protect "OpenDocX" brand for future commercial use
-- Mirrors TensorFlow, Kubernetes, Angular - the established AI/cloud norm
-
-### Why PostgreSQL + pgvector over a dedicated vector DB?
-
-- One less service to operate
-- pgvector's HNSW index is competitive with Pinecone for our scale
-- We can use the same DB for transactions and vectors (atomicity)
-- Future-proof: can scale to dedicated vector DB later if needed
-
-### Why React over Vue/Svelte?
-
-- Largest ecosystem (we need Ant Design's breadth)
-- Most hires know React
-- Server components not needed (we're a SPA)
-- Future: Can add Next.js for SSR if needed
-
-### Why FastAPI over Django/Flask?
-
-- Async-first (better for AI streaming responses)
-- Auto OpenAPI docs (free, accurate)
-- Pydantic integration is excellent
-- Type hints everywhere
-
-### Why a Pre-Build Modal?
-
-- We saw users click "Build" then realize they forgot to publish drafts
-- Catching the error **before** the build is much better UX than after
-- Inspired by code review tools that show diffs before applying
-
-### Why Selection-Aware AI Q&A?
-
-- Users asked "what's in this paragraph?" expecting paragraph-level answer
-- Without selection, the AI would answer the whole document (confusing)
-- We modified the prompt template to constrain to the selection
-
----
-
-## Contributing to the Roadmap
-
-We welcome input! Open an issue with:
-1. The user pain point (concrete scenario, not "it would be nice if...")
-2. The proposed solution (specific, actionable)
-3. Alternative solutions considered
-4. Your willingness to implement
-
-For major changes (new feature, API change), please open a RFC issue first (we have a template for it).
-
----
-
-## License
-
-Apache 2.0 - see [LICENSE](../LICENSE).
-
----
-
-<sub>Last revised: 2026-06-08 · Version: v0.1.0</sub>
+- 中文 Demo 文档。
+- 真实项目迁移案例。
+- 前端 E2E 测试。
+- 静态站移动端体验。
+- 媒体资产管理。
+- 部署文档和故障排查。

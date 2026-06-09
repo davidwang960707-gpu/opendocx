@@ -1,179 +1,132 @@
-# Contributing to OpenDocX
+# 贡献指南
 
-First off, thank you for considering contributing to OpenDocX!
-We welcome bug reports, feature requests, documentation improvements, and pull requests.
+感谢你愿意参与 OpenDocX。这个项目还在 v0.x 阶段，最需要的是清晰的问题反馈、真实使用场景、可复现的 bug 和小步稳定的改进。
 
-> 注:本仓库社区文档**禁止在 UI 文本中用 emoji**(项目协作规则 #5)。上面  仅出现在 markdown 文档装饰里,不影响产品代码。
+## 开始之前
 
-## Code of Conduct
+请先阅读：
 
-This project and everyone participating in it is governed by the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code.
+- [README](README.md)
+- [用户指南](docs/USER-GUIDE.md)
+- [架构说明](docs/ARCHITECTURE.md)
+- [安全策略](SECURITY.md)
 
-## Project Structure
+## 本地开发
 
-```
-opendocx/
-├── backend/                # FastAPI Python 后端
-│   ├── app/
-│   │   ├── main.py        # FastAPI 入口
-│   │   ├── routers/       # REST/SSE 端点
-│   │   ├── services/      # 业务逻辑 (build_service, llm, editor_ai)
-│   │   ├── schemas/       # Pydantic 模型 (6 域)
-│   │   ├── models/        # SQLAlchemy ORM
-│   │   └── db/            # PostgreSQL session
-│   ├── tests/             # 10 个 pytest 文件
-│   ├── scripts/           # start-backend.sh
-│   └── venv/              # Python 3.9.6 venv
-├── frontend/              # React 18 + TypeScript + Vite
-│   ├── src/
-│   │   ├── pages/         # 11 个页面 (Login/Projects/Documents/Published/...)
-│   │   ├── components/    # Editor/AIFloatingActions/PreBuildModal/...
-│   │   ├── services/      # api.ts editorApi.ts
-│   │   ├── types/         # TypeScript 类型
-│   │   └── styles/        # CSS / tokens.css
-│   └── vite.config.ts     # 3077 端口, /api proxy → 8001
-├── docs/                  # 58 张截图 + 收工总结 + 对标报告
-├── data/                  # 运行时数据 (DB / 构建产物)
-└── .env.example           # LLM key + DB 模板
-```
-
-## Development Setup
-
-### Prerequisites
-
-- Python 3.9.6+ (3.12 也支持)
-- Node.js 18+
-- PostgreSQL 14+ with `pgvector` extension
-- Redis 6+ (用于 rate limit)
-
-### 1. 克隆 + 启动 DB
+准备环境：
 
 ```bash
-git clone https://github.com/<your-org>/opendocx.git
-cd opendocx
-
-# 启动 PostgreSQL (Mac 用 brew, 详见 docker-compose.yml)
-createdb opendocx_dev
-psql opendocx_dev -c "CREATE EXTENSION pgvector;"
-
-# 启动 Redis
-redis-server --daemonize yes
+cp .env.example .env
 ```
 
-### 2. 后端
+后端：
 
 ```bash
 cd backend
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
-
-# 复制 env 模板
-cp ../.env.example ../.env
-# 编辑 .env: 填 LLM_API_KEY / DATABASE_URL / REDIS_URL
-
-bash scripts/start-backend.sh    # R12 配套,auto-source .env
-# 后端跑在 http://127.0.0.1:8001
+alembic upgrade head
+cd ..
+bash scripts/seed_demo.sh
+bash backend/scripts/start-backend.sh
 ```
 
-### 3. 前端
+前端：
 
 ```bash
 cd frontend
-npm install
-npx vite --host 127.0.0.1 --port 3077
-# 前端跑在 http://127.0.0.1:3077
+npm ci
+npx vite --host 0.0.0.0 --port 3077
 ```
 
-### 4. 登录
+默认账号：
 
-默认 admin: `admin@opendocx.local` / `admin123` (首次启动 seed)
+```text
+admin@opendocx.local / admin123
+```
 
-## Pull Request Process
+## 分支与提交
 
-### 1. Fork + Branch
+建议分支命名：
+
+```text
+feat/<name>
+fix/<name>
+docs/<name>
+test/<name>
+```
+
+提交信息建议：
+
+```text
+feat: 增加文档移动到文件夹功能
+fix: 修复审计日志列宽计算
+docs: 更新中文用户指南
+test: 增加构建前确认用例
+```
+
+## PR 要求
+
+提交 PR 前请确认：
+
+- 改动范围尽量聚焦。
+- 没有提交 `.env`、本地数据、缓存、构建产物和个人路径。
+- 涉及界面改动时提供截图。
+- 涉及接口或行为改动时更新文档。
+- 说明你实际跑过哪些验证。
+
+PR 描述建议包含：
+
+```text
+## 改动
+
+## 验证
+
+## 截图
+
+## 风险
+```
+
+## 测试
+
+后端：
 
 ```bash
-git checkout -b feature/<short-name>   # 例: feature/r16-static-ai-tip
-# 或
-git checkout -b fix/<bug-id>           # 例: fix/race-condition-publish
+cd backend
+source venv/bin/activate
+pytest
 ```
 
-### 2. Commit 格式 (项目协作规则 v3 #3: 修+验证 一次 commit 收)
+前端：
 
-我们用 Conventional Commits:
-
-```
-<type>(<scope>): <description> (估时)
-
-类型: feat | fix | docs | refactor | test | chore | perf
-scope: opendocx (主项目) | <sub-module> | decision
-description: 中文一句话, 含真根因 (不仅是"fix bug")
-估时: (0.1d ~ 5d)
-
-例:
-  fix(opendocx): R11 - QA 选区没送进 LLM (0.2d)
-  feat(opendocx): R15 预构建弹窗 - doc 树 + 单/批量发布 (0.8d)
-  docs(decision): OpenDocX vs Docusaurus 对标报告 (0.2d)
-```
-
-### 3. PR Description 必含
-
-PR 描述里**必填真根因 + 验证证据** (项目协作规则 v3 #6 "啥也不是" 反例):
-- **根因** — 不只是"修了个 bug",而是要 1 句话说清
-- **改动** — 文件级别 (+行 / -行)
-- **验证** — TestClient 单测结果 / 浏览器 E2E 截图 / DB 真实状态变化
-- **风险** — 列出 0-2 个潜在副作用
-
-### 4. 验证标准 (项目协作规则 v3 #6)
-
-- [ ] 后端改动:对应 test_*.py 通过(`cd backend && source venv/bin/activate && pytest tests/test_<x>.py -v`)
-- [ ] 前端改动:`npx tsc --noEmit` 0 错
-- [ ] 浏览器 E2E:截图 + 关键操作流程
-- [ ] 0 mock 数据:真实 API + 真实 DB 验证
-- [ ] 0 emoji:UI 文本无 unicode emoji(用 SVG / 中文 / 文字)
-- [ ] 0 新依赖(必需时,先开 issue 讨论)
-
-### 5. PR 通过条件
-
-- [ ] 1 个或以上 maintainer review 通过
-- [ ] CI (GitHub Actions) 全绿
-- [ ] 没遗留"修+没测"或"测+没修"的拆 commit
-- [ ] 文档同步更新(如果改了用户可见行为)
-
-## Issue Reporting
-
-### Bug Report 模板 (`.github/ISSUE_TEMPLATE/bug_report.md`)
-
-- 复现步骤
-- 期望行为 vs 实际行为
-- 环境 (OS / Python / Node / DB 版本)
-- 后端日志 (R12 起的 503 错误含中文说明)
-- 截图或 GIF
-
-### Feature Request 模板 (`.github/ISSUE_TEMPLATE/feature_request.md`)
-
-- 痛点描述
-- 项目协作规则 #4: 提交前先**列方案 3 选 1**(根因 / 3 路径 / 工作量估算)
-- 优先级 (P0-P3)
-- 验收标准
-
-## Commit Author 署名
-
-第一次提交前请确保 git config 设好:
 ```bash
-git config user.name "Your Name"
-git config user.email "your.email@example.com"
+cd frontend
+npx tsc --noEmit
 ```
 
-我们鼓励在 commit message 里加 `Co-authored-by:` 标注共同作者 (项目协作规则 #0: 协作透明)。
+如果没有跑完某项测试，请在 PR 中说明原因。
 
-## 联系方式
+## 设计与前端贡献
 
-- GitHub Issues: 主沟通渠道
-- Discussions: 架构 / 路线 / RFC
-- Security: 见 [SECURITY.md](SECURITY.md) (别在 issue 里贴漏洞细节)
+OpenDocX 的界面原则：
 
-## License
+- 后台优先清晰、高效、可扫描。
+- 浅色主题保持统一和克制。
+- 项目主题色用于强调，不要破坏整体阅读秩序。
+- 列表、表格、表单要优先保证密度、对齐和可读性。
+- 关键操作需要连续状态反馈。
 
-贡献的代码默认采用 [Apache License 2.0](LICENSE),与项目一致。
+界面改动最好附带：
+
+- 改动前后截图。
+- 桌面端和窄屏端截图。
+- 关键交互说明。
+
+## 安全问题
+
+请不要把安全漏洞直接公开在 Issue 中。处理方式见 [安全策略](SECURITY.md)。
+
+## 协议
+
+提交到本仓库的代码默认采用 [Apache License 2.0](LICENSE)。

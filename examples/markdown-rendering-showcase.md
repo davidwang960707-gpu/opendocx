@@ -1,14 +1,14 @@
 ---
 title: OpenDocX 静态站渲染能力速查
 slug: render-showcase
-author: OpenDocX Team
+author: OpenDocX 社区
 ---
 
 # OpenDocX 静态站渲染能力速查
 
-> **作者**:OpenDocX Team
+> **作者**:OpenDocX 社区
 > **最后更新**:2026-06-07
-> **目的**:把 OpenDocX 静态站**所有支持**的 Markdown 语法 + 7 种提示块集中演示一次。 Build 一次,一目了然。
+> **目的**:把 OpenDocX 静态站**所有支持**的 Markdown 语法 + 7 种提示块集中演示一次。构建一次,一目了然。
 
 > MD语法: `# H1` / `## H2` / `### H3` / `#### H4` / `##### H5` / `###### H6`
 
@@ -94,9 +94,9 @@ Pygments
 
 > MD语法: `[文字](url)` / `[文字](url "title")` / `<https://auto.link>` / `[锚点](#id)`
 
-普通链接:[OpenDocX GitHub](https://github.com/your-org/opendocx)
+普通链接:[OpenDocX 仓库](https://github.com/opendocx/opendocx)
 
-带标题的链接:[OpenDocX 文档](https://github.com/your-org/opendocx "点击查看完整文档")
+带标题的链接:[OpenDocX 文档](https://github.com/opendocx/opendocx "点击查看完整文档")
 
 自动链接:<https://www.opendocx.local>
 
@@ -339,15 +339,15 @@ R10 在 OpenDocX 里实现了 *HTML* / *CSS* / *API* / *GFM* 等缩写,鼠标悬
 
 本地静态图(占位 — 实际项目里放在 `build_dir/images/`, 用相对路径引用):
 
-![OpenDocX 架构图占位](static/images/opendocx-arch-placeholder.svg "架构示意")
+![OpenDocX 架构图占位](./static/images/opendocx-arch-placeholder.svg "架构示意")
 
 外链图(公网 URL 直接展示):
 
-![GitHub Octocat](https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png "GitHub Logo, 来自 github.com")
+![OpenDocX 外链图片示例](https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png "外链图片示例, 来自 github.com")
 
 带尺寸控制(用 HTML `<img>` + width):
 
-<img src="static/images/opendocx-arch-placeholder.svg" alt="OpenDocX 架构" width="400" />
+<img src="./static/images/opendocx-arch-placeholder.svg" alt="OpenDocX 架构" width="400" />
 
 ### 12.2 视频 (video 标签)
 
@@ -375,7 +375,7 @@ R10 在 OpenDocX 里实现了 *HTML* / *CSS* / *API* / *GFM* 等缩写,鼠标悬
 
 下面是真 GIF (giphy 公网 5MB):
 
-![OpenDocX demo GIF](https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif "Demo GIF from giphy.com")
+![OpenDocX GIF 示例](https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif "GIF 示例, 来自 giphy.com")
 
 > **提示**: GIF 文件大, 建议用 `<video>` 替代 (现代浏览器都支持 video 标签, 而且视频压缩比 GIF 高 5-10 倍)
 

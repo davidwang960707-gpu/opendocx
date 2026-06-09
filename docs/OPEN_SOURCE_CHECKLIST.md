@@ -1,57 +1,58 @@
-# OpenDocX Open Source Checklist
+# OpenDocX 开源检查清单
 
-> Status: v0.1.0 public alpha prep
-> Last updated: 2026-06-09
+这份清单用于 v0.1.0-alpha 开源前自查。目标不是宣称生产完备，而是确保新用户能理解产品、跑起项目、看到主链路，并且不会暴露内部数据。
 
-OpenDocX is ready to be opened as an alpha project once the checklist below is clean. The goal is not to claim production maturity; the goal is to make a new contributor or evaluator understand the product, run it locally, and see the core workflow.
+## 代码与数据
 
-## Positioning
+- [x] 使用干净仓库导出，不携带内部 Git 历史。
+- [x] 不提交 `.env`、数据库、本地构建产物、缓存和个人路径。
+- [x] 提供 `.env.example`。
+- [x] Demo seed 使用公开示例数据。
+- [x] 默认账号为 `admin@opendocx.local / admin123`。
+- [x] 敏感信息扫描无命中。
 
-- [x] Rename public product surface from OpenDocX to OpenDocX.
-- [x] State the new positioning: documentation, manual, and publishing layer for AI / Vibe Coding projects.
-- [x] Mark v0.1.0 as public alpha, not stable production software.
-- [x] Keep known limitations visible in README.
+## 文档
 
-## Repository Hygiene
+- [x] README 中文化。
+- [x] 用户指南中文化。
+- [x] 架构说明中文化。
+- [x] 路线图中文化。
+- [x] API 参考中文化。
+- [x] 贡献指南、安全策略、行为准则中文化。
+- [x] GitHub Issue / PR 模板中文化。
+- [x] Markdown 渲染能力示例加入开源版。
 
-- [x] Keep runtime data out of git: `.env`, `data/builds/`, `data/uploads/`, `data/docs/`, local DB files.
-- [x] Keep internal work notes under `docs/internal/` ignored.
-- [ ] Review tracked generated files, especially `frontend/tsconfig.tsbuildinfo`.
-- [ ] Ensure no local absolute paths remain in public setup docs or runtime defaults.
-- [ ] Decide whether legacy lowercase identifiers such as `opendocx-theme` should stay for compatibility or migrate later.
+## 截图
 
-## Runability
+- [x] 使用当前 OpenDocX 环境重新截图。
+- [x] 删除或不再引用旧品牌、旧布局、旧主题截图。
+- [x] README 只引用当前可代表 v0.1.0-alpha 的核心截图。
 
-- [x] Document default ports: backend `8001`, frontend `3077`.
-- [x] Provide demo seed data.
-- [x] Provide default alpha login: `admin@opendocx.local / admin123`.
-- [ ] Run `bash scripts/seed_demo.sh` against a clean DB.
-- [ ] Run backend tests.
-- [ ] Run frontend build.
-- [ ] Build a demo static site and verify `/published` plus `/docs`.
+## 功能
 
-## Product Scope
+- [x] 登录。
+- [x] 项目管理。
+- [x] 版本和文档树。
+- [x] Markdown 编辑。
+- [x] AI 辅助。
+- [x] 发布确认。
+- [x] 静态站构建。
+- [x] 反馈审核。
+- [x] 用户管理。
+- [x] 审计日志。
 
-- [x] Core admin workflow: login, projects, versions, documents, editor, publish, build.
-- [x] AI workflow: editor panel, floating tip, selection-aware Q&A, streaming responses.
-- [x] Release workflow: pre-build modal, draft detection, single and batch publish.
-- [x] Operations workflow: users, RBAC, audit logs, feedback moderation.
-- [x] Static-site rendering: Markdown, tables, Mermaid, admonitions, Pygments, images, video, iframe styling.
-- [ ] Formula rendering is not complete.
-- [ ] MDX is not implemented.
-- [ ] Real-time collaborative editing is not implemented.
-- [ ] Frontend tests are not implemented.
+## 验证
 
-## Launch Materials
+- [ ] 在干净数据库上执行 `bash scripts/seed_demo.sh`。
+- [ ] 后端测试通过。
+- [ ] 前端 TypeScript 检查通过。
+- [ ] Docker Compose 跑通。
+- [ ] 构建 demo 静态站并确认 `/published` 与 `/docs` 可访问。
 
-- [x] README.
-- [x] CHANGELOG.
-- [x] ROADMAP.
-- [x] USER-GUIDE.
-- [x] API reference.
-- [x] ARCHITECTURE.
-- [x] SECURITY.
-- [x] CONTRIBUTING.
-- [x] Issue templates.
-- [ ] Replace screenshot placeholders with real OpenDocX screenshots.
-- [ ] Decide final GitHub org/repo URL.
+## 发布
+
+- [x] Apache 2.0 协议。
+- [x] 初始 tag：`v0.1.0-alpha`。
+- [ ] 创建公开 GitHub 仓库。
+- [ ] 推送 main 分支和 tag。
+- [ ] 发布第一版 release notes。
