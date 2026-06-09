@@ -266,7 +266,19 @@ classDiagram
 
 ---
 
-## 8. 表格 (table 插件)
+## 8. 公式占位 (math)
+
+> MD语法: 用一对美元符号包裹行内公式, 用两对美元符号包裹块级公式。v0.1.0-alpha 先做占位级美化, 后续可接 KaTeX / MathJax。
+
+行内公式示例: $P(A|B)=\frac{P(B|A)P(A)}{P(B)}$ 会被包成轻量数学标签, 方便读者从正文中识别出来。
+
+$$
+\text{doc_score}=\alpha \cdot \text{semantic_score} + \beta \cdot \text{freshness} + \gamma \cdot \text{feedback_score}
+$$
+
+---
+
+## 9. 表格 (table 插件)
 
 > MD语法: `| 列1 | 列2 |` + `| --- | --- |` + `| 单元格 |`
 
@@ -285,13 +297,14 @@ classDiagram
 | 行内代码 / 代码块 | OK | Pygments 高亮 |
 | 上标 / 下标 | ❌ | 未实现 |
 | 目录 TOC | OK | H1-3 自动生成 |
-| KaTeX 公式 | ❌ | 未实现 |
+| 公式占位 | OK | 行内 / 块级公式先做容器级美化 |
+| KaTeX 公式排版 | ❌ | 未接 KaTeX / MathJax |
 | 图片 / 视频 / GIF | OK | R10 加 demo |
 | Syntax hint 注解 | OK | R10 新加 |
 
 ---
 
-## 9. 脚注 (footnotes 插件)
+## 10. 脚注 (footnotes 插件)
 
 > MD语法: 文中 `[^1]` 引用, 文末 `[^1]: 内容` 定义
 
@@ -303,7 +316,7 @@ classDiagram
 
 ---
 
-## 10. 缩写 (abbr 插件)
+## 11. 缩写 (abbr 插件)
 
 > MD语法: `*[HTML]: HyperText Markup Language` (文末定义, 文中 `*HTML*` 引用)
 
@@ -317,7 +330,7 @@ R10 在 OpenDocX 里实现了 *HTML* / *CSS* / *API* / *GFM* 等缩写,鼠标悬
 
 ---
 
-## 11. 水平线 (hr)
+## 12. 水平线 (hr)
 
 > MD语法: `---` / `***` / `___` (3 个或以上字符单独一行, 渲染为分隔线)
 
@@ -329,11 +342,11 @@ R10 在 OpenDocX 里实现了 *HTML* / *CSS* / *API* / *GFM* 等缩写,鼠标悬
 
 ---
 
-## 12. 图片 (img) / 视频 (video) / GIF
+## 13. 图片 (img) / 视频 (video) / GIF
 
 > MD语法: `![alt](url "title")` (图片, 支持懒加载) / `[视频名](url)` (HTML5 video) / GIF 本质是图片, 用 img 语法
 
-### 12.1 图片 (本地静态资源 + 外链)
+### 13.1 图片 (本地静态资源 + 外链)
 
 > MD语法: `![alt](相对/绝对 URL)` — R10 build 加 `loading="lazy" decoding="async"`, 支持响应式 `max-width: 100%`
 
@@ -349,7 +362,7 @@ R10 在 OpenDocX 里实现了 *HTML* / *CSS* / *API* / *GFM* 等缩写,鼠标悬
 
 <img src="./static/images/opendocx-arch-placeholder.svg" alt="OpenDocX 架构" width="400" />
 
-### 12.2 视频 (video 标签)
+### 13.2 视频 (video 标签)
 
 > MD语法: OpenDocX 默认 `mistune.escape=True`, 文档里写 `<video>` 会被转义显示为字面文本。 **要展示视频有 3 个方案:**
 
@@ -363,13 +376,13 @@ R10 在 OpenDocX 里实现了 *HTML* / *CSS* / *API* / *GFM* 等缩写,鼠标悬
 
 (若想内联, 需 R10 后续扩展 `<video>` 转义豁免, 跟 admonition 一样用 `> MD语法:` 协议)
 
-### 12.3 Iframe 嵌入 (YouTube / Bilibili)
+### 13.3 Iframe 嵌入 (YouTube / Bilibili)
 
 > MD语法: 跟 video 一样, 默认 escape。 改用纯链接
 
 [**&#9654; 打开 YouTube 测试视频**](https://www.youtube.com/embed/dQw4w9WgXcQ) — 链接形式
 
-### 12.4 GIF (本质上 = img, 用 `.gif` 扩展名)
+### 13.4 GIF (本质上 = img, 用 `.gif` 扩展名)
 
 > MD语法: `![alt](demo.gif)` — 跟图片一样, 浏览器自动循环播放
 
@@ -381,20 +394,20 @@ R10 在 OpenDocX 里实现了 *HTML* / *CSS* / *API* / *GFM* 等缩写,鼠标悬
 
 ---
 
-## 13. HTML 内联 (mistune escape=True 默认不渲染)
+## 14. HTML 内联 (mistune escape=True 默认不渲染)
 
 > MD语法: OpenDocX 安全默认 `escape=True`, 写 `<div>` 会被转义显示为字面文本
 
 `<div>` 标签会被转义显示为字面文本,这是**安全默认**(防 XSS)。
 
-要内联 HTML(如上面 12.2/12.3 的 `<video>`/`<iframe>`),需要:
+要内联 HTML(如上面 13.2/13.3 的 `<video>`/`<iframe>`),需要:
 1. 在 OpenDocX 文档编辑页切到 "HTML 源码模式"
 2. 或让管理员把 `mistune.escape` 改为 `False`(全局生效, 不安全)
 3. **本演示文档** 用 12.2/12.3 的内联 HTML, build 端已 escape 掉 `<`/`>`, 你看到的是转义后的字面文本 (不是真视频)
 
 ---
 
-## 14. 转义字符
+## 15. 转义字符
 
 > MD语法: `\*` 转义星号, `` \` `` 转义反引号, `\[` 转义中括号
 
@@ -406,7 +419,7 @@ R10 在 OpenDocX 里实现了 *HTML* / *CSS* / *API* / *GFM* 等缩写,鼠标悬
 
 ---
 
-## 15. 总结 — OpenDocX 静态站完整能力清单
+## 16. 总结 — OpenDocX 静态站完整能力清单
 
 > MD语法: 见上方各节覆盖
 
@@ -418,6 +431,7 @@ R10 在 OpenDocX 里实现了 *HTML* / *CSS* / *API* / *GFM* 等缩写,鼠标悬
 | **代码高亮** | 13 种语言 + guess_lexer 自动 | Pygments 双主题 (R7 修复深色 token 隔离) |
 | **图表** | Mermaid 流程图 / 时序图 / 类图 | mermaid.js@11 CDN |
 | **提示块** | NOTE / TIP / INFO / IMPORTANT / WARNING / CAUTION / DANGER | 提示块, GitHub/Obsidian 风格 |
+| **公式** | 行内公式 / 块级公式占位 | math-inline / math-block 容器样式 |
 | **媒体** | img / video / iframe | R10 加 demo + CSS 样式 |
 | **Syntax hint** | 灰小字右对齐 MD 语法注脚 | R10 新加 |
 | **TOC** | H1-3 自动生成 + 右侧悬浮 + 顶部侧栏 | build_service 后处理 |
@@ -428,9 +442,9 @@ R10 在 OpenDocX 里实现了 *HTML* / *CSS* / *API* / *GFM* 等缩写,鼠标悬
 
 ---
 
-## 16. 反馈
+## 17. 反馈
 
 > MD语法: 本页用 Admonition 提示块 (`> [!TIP]`) 收尾
 
 > [!TIP] 这个文档的目的
-> 把所有"知道能渲"+"实际能渲"对上 — 任何上面打了 OK 的, build 出来就该看到,缺一个就算 bug。 找不到的 img/video/gif 都在第 12 节。
+> 把所有"知道能渲"+"实际能渲"对上 — 任何上面打了 OK 的, build 出来就该看到,缺一个就算 bug。 找不到的 img/video/gif 都在第 13 节。
