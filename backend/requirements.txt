@@ -1,0 +1,42 @@
+# Web Framework
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+python-multipart==0.0.18
+
+# Database
+sqlalchemy[asyncio]==2.0.36
+asyncpg==0.30.0
+alembic==1.14.1
+pgvector==0.3.6
+
+# Auth
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+bcrypt==4.2.1
+
+# AI / RAG
+langchain==0.3.14
+langchain-community==0.3.14
+langchain-openai==0.3.0
+sentence-transformers==3.3.1
+
+# Redis
+redis==5.2.1
+
+# Utils
+python-dotenv==1.0.1
+pydantic==2.10.4
+pydantic-settings==2.7.1
+httpx==0.28.1
+aiofiles==24.1.0
+
+# Markdown rendering & syntax highlight
+mistune==3.2.1
+pygments==2.20.0
+bleach==6.3.0
+
+# Testing
+pytest==8.3.4
+pytest-asyncio==0.24.0
+httpx==0.28.1
+aiosqlite==0.20.0

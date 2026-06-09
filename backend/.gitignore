@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+.pytest_cache/
+
+# 真实数据库 (SQLite/Postgres data files)
+*.db
+*.sqlite
+*.sqlite3
+
+# 数据生成目录
+data/builds/
+
+# macOS
+.DS_Store

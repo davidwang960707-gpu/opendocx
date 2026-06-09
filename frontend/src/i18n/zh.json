@@ -1,0 +1,61 @@
+{
+  "app": {
+    "title": "OpenDocX - AI 项目文档与发布平台",
+    "subtitle": "AI 驱动的企业级文档管理"
+  },
+  "nav": {
+    "dashboard": "概览",
+    "projects": "项目管理",
+    "published": "已发布",
+    "users": "用户管理",
+    "audit": "审计日志",
+    "settings": "个人设置"
+  },
+  "projects": {
+    "title": "项目",
+    "subtitle": "管理你团队的所有知识项目, 共 {count} 个",
+    "search": "搜索项目...",
+    "new": "新建项目",
+    "myProjects": "我的项目",
+    "allProjects": "全部项目",
+    "grid": "网格",
+    "list": "列表",
+    "blank": {
+      "name": "空白项目",
+      "blurb": "只创建项目和默认版本 v1.0, 不预置任何文档"
+    },
+    "apiDoc": {
+      "name": "API 文档",
+      "blurb": "预置认证指南文档, 自动生成 1 篇 seed 文档"
+    },
+    "gettingStarted": {
+      "name": "入门指南",
+      "blurb": "预置快速开始 + 核心概念, 自动生成 2 篇 seed 文档"
+    },
+    "statusMatrix": "状态矩阵",
+    "statusActive": "活跃",
+    "statusPaused": "已暂停",
+    "statusDraft": "草稿",
+    "copy": {
+      "slug": "已复制 slug",
+      "siteUrl": "已复制站点 URL",
+      "apiUrl": "已复制 API 链接"
+    }
+  },
+  "statusBar": {
+    "saved": "刚刚保存",
+    "unsaved": "未保存",
+    "saving": "保存中...",
+    "savedAgo": "{time}前已保存"
+  },
+  "common": {
+    "save": "保存",
+    "cancel": "取消",
+    "create": "创建",
+    "delete": "删除",
+    "edit": "编辑",
+    "confirm": "确认",
+    "loading": "加载中...",
+    "noData": "暂无数据"
+  }
+}

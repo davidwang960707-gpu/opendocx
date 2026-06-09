@@ -1,0 +1,61 @@
+{
+  "app": {
+    "title": "OpenDocX - Documentation & Publishing for AI-Built Projects",
+    "subtitle": "AI-driven enterprise document management"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "projects": "Projects",
+    "published": "Published",
+    "users": "Users",
+    "audit": "Audit Log",
+    "settings": "Settings"
+  },
+  "projects": {
+    "title": "Projects",
+    "subtitle": "Manage all knowledge projects for your team, {count} total",
+    "search": "Search projects...",
+    "new": "New Project",
+    "myProjects": "My Projects",
+    "allProjects": "All Projects",
+    "grid": "Grid",
+    "list": "List",
+    "blank": {
+      "name": "Blank",
+      "blurb": "Create project and default version v1.0, no seed documents"
+    },
+    "apiDoc": {
+      "name": "API Docs",
+      "blurb": "Pre-populated auth guide, 1 seed document auto-generated"
+    },
+    "gettingStarted": {
+      "name": "Getting Started",
+      "blurb": "Pre-populated quickstart + concepts, 2 seed documents auto-generated"
+    },
+    "statusMatrix": "Status Matrix",
+    "statusActive": "Active",
+    "statusPaused": "Paused",
+    "statusDraft": "Draft",
+    "copy": {
+      "slug": "Copied slug",
+      "siteUrl": "Copied site URL",
+      "apiUrl": "Copied API URL"
+    }
+  },
+  "statusBar": {
+    "saved": "Just saved",
+    "unsaved": "Unsaved",
+    "saving": "Saving...",
+    "savedAgo": "Saved {time} ago"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "create": "Create",
+    "delete": "Delete",
+    "edit": "Edit",
+    "confirm": "Confirm",
+    "loading": "Loading...",
+    "noData": "No data"
+  }
+}

@@ -1,0 +1,199 @@
+/* System admin pages */
+
+.page-toolbar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.page-toolbar-left {
+  min-width: 0;
+}
+
+.page-title {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: var(--font-size-page);
+  font-weight: 700;
+  line-height: 1.18;
+}
+
+.page-toolbar-right {
+  display: flex;
+  justify-content: flex-end;
+  min-width: 0;
+}
+
+.page-toolbar-right .ant-space {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  row-gap: 10px;
+}
+
+.page-toolbar-right .ant-input-affix-wrapper,
+.page-toolbar-right .ant-select-selector,
+.page-toolbar-right .ant-btn {
+  min-height: 36px;
+}
+
+.admin-table-shell {
+  overflow: hidden;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.admin-table-shell .ant-table-content {
+  overflow-x: hidden !important;
+}
+
+.admin-table-shell--audit .ant-table-content {
+  overflow-x: auto !important;
+}
+
+.admin-table-shell--feedback .ant-table-content {
+  overflow-x: auto !important;
+}
+
+.admin-table-shell .ant-table-cell {
+  white-space: nowrap;
+}
+
+.admin-table-shell .ant-table-cell .ant-typography {
+  max-width: 100%;
+}
+
+.admin-user-row {
+  display: grid;
+  grid-template-columns: minmax(220px, 1.5fr) 96px 92px minmax(140px, 1fr) 120px 112px;
+  align-items: center;
+  gap: 16px;
+  min-height: 56px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 13px;
+  transition: background 140ms ease, box-shadow 140ms ease;
+}
+
+.admin-user-row:last-child {
+  border-bottom: 0;
+}
+
+.admin-user-row:hover {
+  background: var(--bg-primary);
+}
+
+.admin-row-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 4px;
+}
+
+.admin-row-actions .ant-btn {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+}
+
+.admin-table-shell .ant-table {
+  background: var(--bg-elevated);
+}
+
+.admin-table-shell .ant-table-wrapper,
+.admin-table-shell .ant-spin-nested-loading,
+.admin-table-shell .ant-spin-container {
+  border-radius: inherit;
+}
+
+.admin-table-shell .ant-table-thead > tr > th {
+  height: 44px;
+  padding-block: 10px !important;
+  color: var(--text-secondary) !important;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.admin-table-shell .ant-table-filter-trigger {
+  color: var(--text-tertiary);
+}
+
+.admin-table-shell .ant-table-filter-trigger.active {
+  color: var(--brand-primary);
+}
+
+.admin-table-shell .ant-table-tbody > tr > td {
+  padding-block: 10px !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.admin-table-shell .ant-pagination {
+  margin: 16px !important;
+}
+
+.feedback-stats-row {
+  margin-bottom: 16px;
+}
+
+.feedback-stats-row .ant-col {
+  margin-bottom: 12px;
+}
+
+.feedback-stat-card {
+  height: 100%;
+  padding: 14px 16px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.feedback-stat-card .ant-statistic-title {
+  margin-bottom: 6px;
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.feedback-stat-card .ant-statistic-content {
+  font-size: 24px;
+  line-height: 1.1;
+}
+
+.feedback-body-cell {
+  min-width: 0;
+  white-space: normal;
+}
+
+.feedback-body-cell .ant-typography {
+  margin-bottom: 0;
+}
+
+.feedback-author-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+@media (max-width: 960px) {
+  .page-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .page-toolbar-right,
+  .page-toolbar-right .ant-space {
+    justify-content: flex-start;
+  }
+
+  .admin-table-shell {
+    overflow-x: auto;
+  }
+
+  .admin-user-row {
+    min-width: 840px;
+  }
+}

@@ -1,0 +1,65 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+venv/
+.venv/
+dist/
+*.egg
+
+# Node
+node_modules/
+.vite/
+dist/
+
+# Environment
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+*.log
+
+# Build
+backend/static/
+docusaurus/build/
+
+# OpenDocX runtime data (DB-driven, not source)
+data/builds/
+data/docs/
+data/uploads/
+data/projects/
+
+# Local DB files (defensive, dev-only, never push to git)
+*.db
+*.sqlite
+*.sqlite3
+backend/data/*.db
+speculum.db
+atlas_dev.db
+backend/atlas_dev.db
+backend/data/opendocx.db
+
+# Local session cache (per-machine)
+.hermes/
+.hms-cwd
+bundle/*.bundle
+tsconfig.tsbuildinfo
+
+# Internal docs (never publish)
+docs/internal/
+docs/internal/**
+
+# Backups (never push)
+*.bundle
+*.backup
+*.bak

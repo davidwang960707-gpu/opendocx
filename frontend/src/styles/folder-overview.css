@@ -1,0 +1,95 @@
+/* FolderOverview — 文件夹预览 (区别于文档的 MDEditor 区) */
+.folder-overview {
+  padding: 32px 40px;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.folder-overview-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border-subtle);
+  margin-bottom: 24px;
+}
+
+.folder-overview-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary, #8B7FE8));
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.folder-overview-stats {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.folder-stat-card {
+  background: var(--bg-overlay, #FFFFFF);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 16px 18px;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.folder-stat-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+.folder-stat-card--accent {
+  background: linear-gradient(135deg, rgba(79, 70, 229, 0.06), rgba(139, 127, 232, 0.04));
+  border-color: rgba(79, 70, 229, 0.2);
+}
+.folder-stat-card--success {
+  background: linear-gradient(135deg, rgba(52, 199, 89, 0.06), rgba(52, 199, 89, 0.02));
+  border-color: rgba(52, 199, 89, 0.2);
+}
+.folder-stat-value {
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--text-primary, #1D1D1F);
+  letter-spacing: -0.5px;
+}
+.folder-stat-label {
+  font-size: 12px;
+  color: var(--text-tertiary, #86868B);
+  margin-top: 4px;
+}
+
+.folder-overview-section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary, #1D1D1F);
+}
+
+.folder-overview-table {
+  border-radius: 10px;
+  overflow: hidden;
+}
+.folder-overview-table .ant-table-thead > tr > th {
+  background: var(--bg-secondary, #F5F5F7) !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  color: var(--text-tertiary, #86868B) !important;
+}
+
+@media (max-width: 900px) {
+  .folder-overview-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

@@ -1,0 +1,137 @@
+/* Admin R12: ProjectContextPanel — sider 顶部项目上下文
+ *
+ * 暗色 sider (rgb(26, 26, 26) 背景) 上的 mini 卡片,
+ * 跟 .app-sider-* token 体系一致
+ */
+.project-context-panel {
+  padding: 0 4px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* 返回项目列表 — 顶部一行小链接 */
+.project-context-back {
+  color: var(--sider-fg-muted) !important;
+  font-size: 11px !important;
+  text-decoration: none !important;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: all 0.15s;
+}
+.project-context-back:hover {
+  color: var(--sider-fg) !important;
+  background: var(--sider-hover-bg);
+}
+
+/* 项目头 — logo + 名称 + slug */
+.project-context-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 6px;
+}
+.project-context-logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+.project-context-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.project-context-name {
+  color: var(--sider-fg) !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  line-height: 1.2 !important;
+}
+.project-context-slug {
+  color: var(--sider-fg-subtle) !important;
+  font-size: 10px !important;
+  font-family: monospace;
+}
+
+/* 5 数字 mini 网格 */
+.project-context-stats {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 4px;
+  padding: 6px 4px;
+  background: var(--sider-hover-bg);
+  border-radius: 6px;
+}
+.project-context-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 4px 2px;
+  border-radius: 4px;
+  cursor: default;
+  transition: background 0.15s;
+}
+.project-context-stat:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+.project-context-stat.active {
+  background: var(--sider-active-bg, rgba(79, 70, 229, 0.2));
+}
+.project-context-stat-icon {
+  font-size: 12px;
+  line-height: 1;
+}
+.project-context-stat-value {
+  color: var(--sider-fg) !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+.project-context-stat-label {
+  color: var(--sider-fg-subtle) !important;
+  font-size: 9px !important;
+  line-height: 1;
+}
+
+/* 项目内子导航 — 4 个 link */
+.project-context-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 0 4px;
+}
+.project-context-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  color: var(--sider-fg-muted) !important;
+  text-decoration: none !important;
+  font-size: 12px;
+  transition: all 0.15s;
+}
+.project-context-nav-item:hover {
+  background: var(--sider-hover-bg);
+  color: var(--sider-fg) !important;
+}
+.project-context-nav-item.active {
+  background: var(--sider-active-bg, rgba(79, 70, 229, 0.2));
+  color: var(--sider-fg) !important;
+  font-weight: 500;
+}

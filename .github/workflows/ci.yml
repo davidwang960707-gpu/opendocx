@@ -1,0 +1,197 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  backend:
+    name: Backend (Python 3.12)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: opendocx_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Install dependencies
+        working-directory: backend
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest pytest-asyncio httpx ruff
+
+      - name: Ruff lint
+        working-directory: backend
+        run: ruff check app/ tests/
+
+      - name: Wait for PostgreSQL
+        run: |
+          for i in 1 2 3 4 5 6 7 8 9 10; do
+            if pg_isready -h localhost -p 5432; then
+              echo "PostgreSQL ready"
+              break
+            fi
+            echo "Waiting for PostgreSQL... ($i/10)"
+            sleep 3
+          done
+
+      - name: Enable pgvector
+        env:
+          PGPASSWORD: postgres
+        run: |
+          psql -h localhost -U postgres -d opendocx_test -c "CREATE EXTENSION IF NOT EXISTS pgvector;"
+
+      - name: Run pytest
+        working-directory: backend
+        env:
+          DATABASE_URL: postgresql+asyncpg://postgres:postgres@localhost:5432/opendocx_test
+          REDIS_URL: redis://localhost:6379
+        run: |
+          pytest tests/ -v --tb=short --asyncio-mode=auto \
+            --ignore=tests/test_pgvector.py \
+            --ignore=tests/test_build_e2e.py
+          # test_pgvector needs real model weights, test_build_e2e needs external LLM, skip in CI
+
+  frontend:
+    name: Frontend (TypeScript)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci || npm install
+
+      - name: TypeScript check
+        working-directory: frontend
+        run: npx tsc --noEmit
+
+      - name: Build
+        working-directory: frontend
+        run: npm run build
+        env:
+          VITE_API_BASE: /api
+  # Secret scan
+  secrets:
+    name: Secret scan (gitleaks)
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # gitleaks 需要全历史
+
+      - name: Run gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
+
+  # Repository metadata
+  meta:
+    name: Repo metadata
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check LICENSE exists
+        run: |
+          if [ ! -f LICENSE ]; then
+            echo "::error::LICENSE file is required for open source"
+            exit 1
+          fi
+          echo "  ok LICENSE exists"
+
+      - name: Check README exists and > 100 lines
+        run: |
+          if [ ! -f README.md ]; then
+            echo "::error::README.md is required"
+            exit 1
+          fi
+          LINES=$(wc -l < README.md)
+          if [ "$LINES" -lt 100 ]; then
+            echo "::error::README.md is too short ($LINES lines), need at least 100"
+            exit 1
+          fi
+          echo "  ok README.md has $LINES lines"
+
+      - name: Check no emoji in README.md
+        run: |
+          if grep -rPn '[\\x{1F300}-\\x{1F9FF}\\x{1FA00}-\\x{1FAFF}]' README.md 2>/dev/null; then
+            echo "::error::README.md contains emoji"
+            exit 1
+          fi
+          echo "  ok README.md 0 emoji"
+
+      - name: Check .env not committed
+        run: |
+          if git ls-files | grep -E '^\\.env$|^\\.env\\.local$'; then
+            echo "::error::.env or .env.local is committed! Add to .gitignore"
+            exit 1
+          fi
+          echo "  ok .env not in git"
+
+      - name: Check .gitignore covers secrets
+        run: |
+          REQUIRED=(".env" "node_modules/" "venv/" "data/builds/")
+          for pattern in "${REQUIRED[@]}"; do
+            if ! grep -qF "$pattern" .gitignore; then
+              echo "::error::.gitignore missing pattern: $pattern"
+              exit 1
+            fi
+          done
+          echo "  ok .gitignore covers .env / node_modules / venv / data/builds"
+
+      - name: Check Apache 2.0 LICENSE header
+        run: |
+          if ! head -5 LICENSE | grep -q "Apache License"; then
+            echo "::error::LICENSE doesn't look like Apache 2.0"
+            exit 1
+          fi
+          echo "  ok LICENSE is Apache 2.0"

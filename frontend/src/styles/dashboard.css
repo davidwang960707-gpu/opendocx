@@ -1,0 +1,41 @@
+/* Dashboard — P1-UI-1 */
+
+.recent-projects {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  background: var(--bg-elevated);
+  overflow: hidden;
+}
+
+.recent-project-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--border-subtle);
+  transition: background 0.15s;
+}
+
+.recent-project-row:last-child {
+  border-bottom: none;
+}
+
+.recent-project-row:hover {
+  background: var(--bg-secondary);
+}
+
+.recent-project-mark {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFF;
+  font-size: 14px;
+  font-weight: 700;
+  flex-shrink: 0;
+}

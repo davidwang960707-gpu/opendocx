@@ -1,0 +1,363 @@
+/* OpenDocX 全局样式 — Apple WWDC 极简风格
+ *
+ * P1-UI-5: 暗色模式 — CSS 变量由 [data-theme] 切换
+ * light = 默认；dark = data-theme="dark"
+ */
+:root,
+[data-theme='light'] {
+  --bg-primary: #F7F8FB;
+  --bg-secondary: #FFFFFF;
+  --bg-tertiary: #EEF1F6;
+  --bg-elevated: #FFFFFF;
+  --bg-overlay: rgba(255, 255, 255, 0.85);
+
+  --text-primary: #1D1D1F;
+  --text-secondary: #6E6E73;
+  --text-tertiary: #AEAEB2;
+  --text-inverse: #F5F5F7;
+
+  --brand-primary: #4F46E5;
+  --brand-secondary: #8B7FE8;
+  --border: #D2D2D7;
+  --border-subtle: #E8ECF3;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
+
+  /* 侧边栏专用 token (P1 色彩统一) */
+  --sider-bg: #F8F9FC;
+  --sider-bg-elevated: #FFFFFF;
+  --sider-divider: rgba(17, 24, 39, 0.08);
+  --sider-fg: #1D1D1F;
+  --sider-fg-muted: #6E6E73;
+  --sider-fg-subtle: #98989F;
+  --sider-fg-active: #1D1D1F;
+  --sider-active-bg: rgba(79, 70, 229, 0.10);
+  --sider-active-border: rgba(79, 70, 229, 0.18);
+  --sider-active-indicator: var(--brand-primary);
+  --sider-hover-bg: rgba(17, 24, 39, 0.05);
+  --sider-brand-tint: linear-gradient(180deg, rgba(79, 70, 229, 0.025) 0%, rgba(79, 70, 229, 0) 132px);
+  --sider-brand-border: 1px solid rgba(79, 70, 229, 0.12);
+}
+
+[data-theme='dark'] {
+  --bg-primary: #000000;
+  --bg-secondary: #0A0A0B;
+  --bg-tertiary: #1C1C1E;
+  --bg-elevated: #1C1C1E;
+  --bg-overlay: rgba(28, 28, 30, 0.85);
+
+  --text-primary: #F5F5F7;
+  --text-secondary: #AEAEB2;
+  --text-tertiary: #6E6E73;
+  --text-inverse: #1D1D1F;
+
+  --brand-primary: #6366F1;
+  --brand-secondary: #8B7FE8;
+  --border: #38383A;
+  --border-subtle: #2C2C2E;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+
+  /* 暗色下侧栏与主背景对比拉开 */
+  --sider-bg: #0A0A0B;
+  --sider-bg-elevated: #141416;
+  --sider-divider: rgba(255, 255, 255, 0.06);
+  --sider-fg: #F5F5F7;
+  --sider-fg-muted: #98989D;
+  --sider-fg-subtle: #6E6E73;
+  --sider-fg-active: #FFFFFF;
+  --sider-active-bg: rgba(99, 102, 241, 0.18);
+  --sider-active-indicator: #6366F1;
+  --sider-hover-bg: rgba(255, 255, 255, 0.05);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  /* Admin P1-段1 W1 准备: B 紧凑风字体栈 (英文 Inter, 中文 HarmonyOS Sans SC, 代码 JetBrains Mono) */
+  font-family: "Inter", "HarmonyOS Sans SC", -apple-system, BlinkMacSystemFont, "PingFang SC", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: var(--text-primary);
+  background: var(--bg-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background 0.2s, color 0.2s;
+}
+
+code, pre, kbd, samp, .mono {
+  font-family: "JetBrains Mono", ui-monospace, Menlo, Monaco, Consolas, monospace;
+  font-variant-ligatures: none;
+}
+
+/* === Admin P1-段1 W1 B 紧凑风: 5 项新 token (行高/字号/圆角/阴影/品牌色微光) === */
+:root {
+  /* 行高 (3 档: 列表行 40 / 紧凑卡 32 / 内联 24) */
+  --line-height-list:   40px;
+  --line-height-card:   32px;
+  --line-height-inline: 24px;
+
+  /* 字号 (5 档严格, 配合高对比度) */
+  --font-size-aux:   12px;
+  --font-size-body:  14px;
+  --font-size-card:  16px;
+  --font-size-section: 20px;
+  --font-size-page:  24px;
+
+  /* 圆角 (3 档: 小 8 / 中 12 / 大 20) */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+
+  /* 品牌色微光阴影 (Admin新方向, 摒弃纯黑) */
+  --shadow-hover:  0 2px 8px rgba(79, 70, 229, 0.08);
+  --shadow-popup:  0 8px 24px rgba(0, 0, 0, 0.4), 0 0 0 1px var(--border-subtle);
+  --shadow-popup-dark: 0 8px 24px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+/* 暗色模式: 品牌色微光保留, 阴影用 dark 版本 (重遮罩 + 微边框) */
+[data-theme="dark"] {
+  --shadow-hover:  0 2px 8px rgba(155, 133, 255, 0.32);
+  --shadow-popup:  var(--shadow-popup-dark);
+}
+
+/* ════════════════════════════════════════════════════════════════
+   Atlas EIDS 玻璃质感 (S3 注入) — 顶栏/侧栏/卡片 启用毛玻璃
+   浅色下玻璃感较弱 (alpha 0.72), 暗色下玻璃感强 (alpha 0.6 + 黑底)
+   ════════════════════════════════════════════════════════════════ */
+
+/* 顶栏 (Antd Layout > header) — 滚动时半透明 + backdrop-filter */
+.ant-layout-header,
+.app-header {
+  background: var(--bg-glass) !important;
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  border-bottom: 1px solid var(--border-glass);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow-sm);
+}
+
+/* 侧栏 — R 后: 浅色=纯白, 暗色=紫调深灰; 边框用品牌色 1px 边 */
+.ant-layout-sider,
+.app-sider {
+  background: var(--sider-bg) !important;
+  border-right: var(--sider-brand-border);
+  box-shadow: 4px 0 24px rgba(17, 24, 39, 0.04);
+}
+
+[data-theme="dark"] .ant-layout-sider,
+[data-theme="dark"] .app-sider {
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.5);
+}
+
+/* 卡片 — 玻璃感白底 + 悬浮微光 */
+.ant-card,
+.glass-card {
+  background: var(--bg-elevated) !important;
+  border: 1px solid var(--border-subtle) !important;
+  border-radius: var(--radius-lg) !important;
+  transition: box-shadow var(--transition-glass), transform var(--transition-glass);
+}
+
+.ant-card:hover,
+.glass-card:hover {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-1px);
+}
+
+[data-theme="dark"] .ant-card,
+[data-theme="dark"] .glass-card {
+  background: var(--bg-elevated) !important;
+  border-color: var(--border-subtle) !important;
+}
+
+/* 弹出层 (Drawer/Modal/Dropdown/Popover) — Atlas 玻璃弹层 */
+.ant-drawer-content,
+.ant-modal-content,
+.ant-popover-inner {
+  background: var(--bg-elevated) !important;
+  backdrop-filter: blur(var(--glass-blur-strong)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur-strong)) saturate(var(--glass-saturate));
+  border: 1px solid var(--border-glass) !important;
+  box-shadow: var(--shadow-popup) !important;
+}
+
+.ant-modal-content {
+  overflow: hidden;
+  border-color: var(--border-subtle) !important;
+  border-radius: var(--radius-md) !important;
+}
+
+.ant-modal-header {
+  margin-bottom: 20px !important;
+  padding-bottom: 16px !important;
+  background: transparent !important;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.ant-modal-title {
+  color: var(--text-primary) !important;
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  line-height: 1.35 !important;
+}
+
+.ant-modal-close {
+  color: var(--text-secondary) !important;
+}
+
+.ant-modal-body {
+  background: var(--bg-elevated);
+}
+
+/* 顶卡 — Dashboard 统计卡的玻璃感 (放在 tokens.css 之外的 fallback) */
+.stat-card.glass-on-hover {
+  transition: all var(--transition-glass);
+}
+.stat-card.glass-on-hover:hover {
+  background: var(--bg-glass);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  box-shadow: var(--shadow-hover);
+}
+
+/* 侧边栏样式 — P1 统一用 --sider-* token */
+.sidebar {
+  background: var(--sider-bg);
+  min-height: 100vh;
+  color: var(--sider-fg);
+}
+
+.sidebar .menu-item {
+  color: var(--sider-fg-muted);
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: color 0.2s, background 0.2s;
+}
+
+.sidebar .menu-item:hover {
+  color: var(--sider-fg);
+  background: var(--sider-hover-bg);
+}
+
+.sidebar .menu-item.active {
+  color: var(--sider-fg-active);
+  background: var(--sider-active-bg);
+  box-shadow: inset 2px 0 0 var(--sider-active-indicator);
+}
+
+/* 内容区 */
+.content-area {
+  padding: 32px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* 统计卡片 */
+.stat-card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
+  transition: background 0.2s, border 0.2s;
+}
+
+.stat-card .number {
+  font-size: 40px;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-card .label {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+/* 覆盖 Ant Design 默认样式 — 浅色 */
+.ant-layout-sider {
+  background: var(--sider-bg) !important;
+}
+.ant-menu-dark {
+  background: transparent !important;
+}
+.ant-btn-primary {
+  background: var(--brand-primary);
+  border-color: var(--brand-primary);
+}
+.ant-btn-primary:hover {
+  background: var(--brand-secondary);
+  border-color: var(--brand-secondary);
+}
+
+/* AntD 暗色调整 — 当 root data-theme="dark" */
+[data-theme='dark'] .ant-layout {
+  background: var(--bg-primary);
+}
+[data-theme='dark'] .ant-layout-header {
+  background: var(--bg-overlay) !important;
+  border-bottom-color: var(--border-subtle) !important;
+  color: var(--text-primary);
+}
+[data-theme='dark'] .ant-layout-content {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+[data-theme='dark'] .ant-card {
+  background: var(--bg-elevated) !important;
+  border-color: var(--border-subtle) !important;
+  color: var(--text-primary);
+}
+[data-theme='dark'] .ant-typography {
+  color: var(--text-primary);
+}
+[data-theme='dark'] .ant-modal-content {
+  background: var(--bg-elevated) !important;
+  color: var(--text-primary);
+}
+[data-theme='dark'] .ant-input,
+[data-theme='dark'] .ant-input-affix-wrapper,
+[data-theme='dark'] .ant-input-number,
+[data-theme='dark'] .ant-select-selector,
+[data-theme='dark'] .ant-picker {
+  background: var(--bg-secondary) !important;
+  border-color: var(--border) !important;
+  color: var(--text-primary) !important;
+}
+[data-theme='dark'] .ant-table {
+  background: var(--bg-elevated) !important;
+  color: var(--text-primary);
+}
+[data-theme='dark'] .ant-table-thead > tr > th {
+  background: var(--bg-tertiary) !important;
+  color: var(--text-secondary) !important;
+  border-bottom-color: var(--border-subtle) !important;
+}
+[data-theme='dark'] .ant-table-tbody > tr > td {
+  border-bottom-color: var(--border-subtle) !important;
+}
+[data-theme='dark'] .ant-empty-description {
+  color: var(--text-tertiary);
+}
+[data-theme='dark'] .ant-tree {
+  background: transparent !important;
+  color: var(--text-inverse);
+}
+
+/* 滚动条 */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-tertiary);
+}

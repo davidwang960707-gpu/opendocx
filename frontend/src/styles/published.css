@@ -1,0 +1,453 @@
+/* Published 页面 — 作品集风格 (P1-UI-4 + P1-UI-9)
+ *
+ * 布局：
+ *   .pub-hero — 大标题 + 副标题 + 总览指标
+ *   .pub-grid — 站点卡片网格 (auto-fill minmax(360, 1fr))
+ *   .pub-card — 单个站点：顶部品牌色 + 截图占位 + 元信息 + 立即查看按钮
+ *
+ * 风格：Apple WWDC 极简 — 大块面、留白、悬停浮起
+ */
+
+.pub-page {
+  min-height: calc(100vh - 56px);
+  background: var(--bg-primary);
+  padding: 64px 48px 96px;
+}
+
+.pub-page--admin {
+  min-height: 0;
+  padding: 0;
+}
+
+.pub-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 360px;
+}
+
+.pub-admin-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.pub-admin-stat {
+  padding: 16px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.pub-admin-stat-label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 12px;
+}
+
+.pub-admin-stat-value {
+  color: var(--text-primary);
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.pub-admin-stat-value--compact {
+  font-size: 18px;
+  line-height: 1.25;
+}
+
+.pub-site-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pub-site-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 20px;
+  align-items: center;
+  min-height: 112px;
+  padding: 18px 20px 18px 24px;
+  overflow: hidden;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  transition: border-color 140ms ease, box-shadow 140ms ease, transform 140ms ease;
+}
+
+.pub-site-row:hover {
+  border-color: color-mix(in srgb, var(--brand-color, var(--brand-primary)) 36%, var(--border-subtle));
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-1px);
+}
+
+.pub-site-accent {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 5px;
+  background: var(--brand-color, var(--brand-primary));
+}
+
+.pub-site-main {
+  min-width: 0;
+}
+
+.pub-site-title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.pub-site-title {
+  color: var(--text-primary);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.pub-site-url {
+  margin-top: 2px;
+  color: var(--text-tertiary);
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+.pub-site-version {
+  margin: 0;
+}
+
+.pub-site-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  min-width: 0;
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.pub-site-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+}
+
+.pub-site-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pub-hero {
+  max-width: 1200px;
+  margin: 0 auto 56px;
+}
+
+.pub-hero-eyebrow {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--brand-primary);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.pub-hero-title {
+  font-size: 56px;
+  font-weight: 700;
+  letter-spacing: -1.5px;
+  line-height: 1.05;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+}
+
+.pub-hero-sub {
+  font-size: 19px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  max-width: 680px;
+  margin-bottom: 40px;
+}
+
+/* V2-B: 旧 pub-stats/pub-stat 段删除 (R 后: 改用 MetricStripCell 风格 inline) */
+
+/* 工具条：搜索 + 刷新 */
+.pub-toolbar {
+  max-width: 1200px;
+  margin: 0 auto 32px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.pub-search {
+  flex: 1;
+  max-width: 400px;
+}
+
+/* 站点卡片网格 */
+.pub-grid {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 24px;
+}
+
+.pub-card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: 20px;
+  overflow: hidden;
+  transition: transform 0.25s cubic-bezier(0.2, 0, 0, 1),
+              box-shadow 0.25s,
+              border-color 0.25s;
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: inherit;
+}
+
+.pub-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(123, 97, 255, 0.18);
+  border-color: transparent;
+}
+
+[data-theme='dark'] .pub-card:hover {
+  box-shadow: 0 8px 24px rgba(155, 133, 255, 0.32);
+}
+
+/* 品牌色条 */
+.pub-card-brand {
+  height: 6px;
+  width: 100%;
+}
+
+/* 截图占位 — 用品牌色 + 文档标题做内嵌 preview */
+.pub-card-preview {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.pub-card-preview-mock {
+  width: 78%;
+  height: 76%;
+  background: var(--bg-elevated);
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  gap: 8px;
+  overflow: hidden;
+}
+
+.pub-card-preview-bar {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  height: 6px;
+}
+
+.pub-card-preview-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--border);
+}
+
+.pub-card-preview-line {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--bg-tertiary);
+}
+
+.pub-card-preview-line.title {
+  width: 60%;
+  background: var(--brand-color, var(--brand-primary));
+  opacity: 0.7;
+}
+
+.pub-card-preview-line.text {
+  width: 90%;
+  background: var(--bg-tertiary);
+}
+
+.pub-card-preview-line.text-2 {
+  width: 75%;
+  background: var(--bg-tertiary);
+}
+
+.pub-card-preview-line.text-3 {
+  width: 85%;
+  background: var(--bg-tertiary);
+}
+
+/* 卡片主体 */
+.pub-card-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+}
+
+.pub-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.pub-card-title {
+  font-size: 19px;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: -0.3px;
+  line-height: 1.3;
+}
+
+.pub-card-slug {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  font-family: "SF Mono", Menlo, monospace;
+  margin-top: 2px;
+}
+
+.pub-card-version {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.pub-card-meta {
+  display: flex;
+  gap: 16px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+.pub-card-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* P1-UI-9: brand 色"立即查看"按钮 */
+.pub-card-cta {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: var(--brand-color, var(--brand-primary));
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 12px;
+  text-decoration: none;
+  transition: filter 0.15s, transform 0.15s;
+  letter-spacing: -0.1px;
+}
+
+.pub-card-cta:hover {
+  filter: brightness(1.1);
+  transform: scale(1.01);
+  text-decoration: none;
+  color: #fff;
+}
+
+.pub-card-cta-secondary {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.pub-card-cta-secondary:hover {
+  background: var(--border);
+  color: var(--text-primary);
+}
+
+/* 空状态 */
+.pub-empty {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 80px 0;
+  text-align: center;
+}
+
+.pub-empty-icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 24px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 36px;
+}
+
+.pub-empty-title {
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: -0.5px;
+  margin-bottom: 8px;
+}
+
+.pub-empty-desc {
+  font-size: 16px;
+  color: var(--text-secondary);
+  margin-bottom: 32px;
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+  .pub-page { padding: 32px 16px 64px; }
+  .pub-page--admin { padding: 0; }
+  .pub-admin-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pub-site-row { grid-template-columns: 1fr; }
+  .pub-site-actions { justify-content: flex-start; flex-wrap: wrap; }
+  .pub-hero-title { font-size: 36px; letter-spacing: -0.8px; }
+  .pub-hero-sub { font-size: 16px; }
+  .pub-grid { grid-template-columns: 1fr; }
+}
+
+/* === P1: AppSider 接入后的布局 === */
+.pub-layout {
+  display: flex;
+  height: 100vh;
+  background: var(--bg-primary);
+  overflow: hidden;
+}
+
+.pub-main {
+  flex: 1;
+  min-width: 0;
+  height: 100vh;
+  overflow-y: auto;
+  background: var(--bg-primary);
+}

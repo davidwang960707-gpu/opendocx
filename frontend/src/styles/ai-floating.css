@@ -1,0 +1,225 @@
+/* AI 浮层 + 接受/拒绝 Modal — P0-B-5
+ *
+ * 浮层：白底胶囊，1px 边框，6px 圆角 + 阴影
+ * Modal：左原文右生成（或上原文下生成），stream 状态显示打字光标
+ */
+
+/* === 浮层 === */
+.ai-floating-popup {
+  position: absolute;
+  z-index: 1000;
+  background: #FFFFFF;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.06),
+    0 0 0 0.5px rgba(0, 0, 0, 0.04);
+  padding: 8px;
+  min-width: 360px;
+  font-size: 12px;
+  animation: aiPopupIn 0.15s ease-out;
+}
+
+@keyframes aiPopupIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* 鼠标追随模式：左上角对齐 top/left，不做 X 居中 */
+.ai-floating-popup--cursor {
+  transform: none !important;
+  animation: aiPopupIn 0.15s ease-out;
+}
+
+.ai-floating-tip {
+  font-size: 11px;
+  color: #6E6E73;
+  padding: 4px 4px 6px 8px;
+  border-bottom: 1px solid #F0F0F2;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  /* form 默认有 margin, 去掉 */
+  margin-top: 0;
+}
+
+.ai-floating-tip-dot {
+  flex: 0 0 auto;
+  width: 6px;
+  height: 6px;
+  background: #4F46E5;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+}
+
+/* 内联 Query 输入框 (R11) */
+.ai-floating-tip-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 12px;
+  color: #1D1D1F;
+  padding: 4px 2px;
+  font-family: inherit;
+}
+
+.ai-floating-tip-input::placeholder {
+  color: #9A9AA0;
+  font-size: 11px;
+}
+
+.ai-floating-tip-input:disabled {
+  color: #9A9AA0;
+  cursor: not-allowed;
+}
+
+.ai-floating-tip-send {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  color: #9A9AA0;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  font-size: 12px;
+  padding: 0;
+}
+
+.ai-floating-tip-send:hover:not(:disabled) {
+  background: #EEF2FF;
+  color: #4F46E5;
+}
+
+.ai-floating-tip-send:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.ai-floating-actions {
+  display: flex;
+  gap: 2px;
+  flex-wrap: wrap;
+}
+
+.ai-floating-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  border: none;
+  background: transparent;
+  color: #1D1D1F;
+  font-size: 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  font-family: inherit;
+}
+
+.ai-floating-btn:hover:not(:disabled) {
+  background: #F5F5F7;
+  color: #4F46E5;
+}
+
+.ai-floating-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.ai-floating-btn .anticon {
+  font-size: 13px;
+}
+
+/* 更多下拉 */
+.ai-floating-more {
+  position: relative;
+}
+
+.ai-floating-more-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  background: #FFFFFF;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  padding: 4px;
+  min-width: 130px;
+  z-index: 1001;
+}
+
+.ai-floating-more-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  font-size: 12px;
+  color: #1D1D1F;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.ai-floating-more-item:hover {
+  background: #F5F5F7;
+  color: #4F46E5;
+}
+
+/* === 接受/拒绝 Modal === */
+.ai-stream-preview,
+.ai-diff-original,
+.ai-diff-generated {
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.6;
+  padding: 12px;
+  border-radius: 8px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin: 0;
+  max-height: 360px;
+  overflow: auto;
+}
+
+.ai-stream-preview {
+  margin-top: 16px;
+  background: #F5F5F7;
+  color: #1D1D1F;
+  text-align: left;
+  border-left: 2px solid #4F46E5;
+}
+
+.ai-diff-section {
+  margin-bottom: 16px;
+}
+
+.ai-diff-label {
+  font-size: 11px;
+  color: #6E6E73;
+  font-weight: 500;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.ai-diff-original {
+  background: #FFF5F5;
+  color: #6E6E73;
+  border-left: 2px solid #FF3B30;
+  text-decoration: line-through;
+  text-decoration-color: rgba(255, 59, 48, 0.4);
+}
+
+.ai-diff-generated {
+  background: #F0F8FF;
+  color: #1D1D1F;
+  border-left: 2px solid #4F46E5;
+}

@@ -1,0 +1,247 @@
+/* ═══════════════════════════════════════════════════════════════════
+   OpenDocX × Atlas EIDS Design Tokens
+   借鉴 Atlas EIDS 9 色体系 + 毛玻璃 + 8 档间距 + 5 档圆角
+   主题机制: [data-theme="light/dark"] 切换, 走 W3 A3 落地的 useThemeStore
+   适用: 前端 (React 19 + Antd 5) + 静态站 (build_service.py 注入)
+   ═══════════════════════════════════════════════════════════════════ */
+
+:root,
+[data-theme='light'] {
+  /* ═══ Atlas 9 色 + 品牌色 (violet 为主, blue/green/orange/pink/cyan/yellow/red/purple 装饰) ═══ */
+  --atlas-violet: #7B61FF;   /* 主色调 */
+  --atlas-blue: #3B82F6;     /* 辅助蓝 */
+  --atlas-green: #10B981;    /* 成功绿 */
+  --atlas-orange: #F97316;   /* 警告橙 */
+  --atlas-pink: #EC4899;     /* 强调粉 */
+  --atlas-cyan: #06B6D4;     /* 信息青 */
+  --atlas-yellow: #EAB308;   /* 注意黄 */
+  --atlas-red: #EF4444;      /* 危险红 */
+  --atlas-purple: #A855F7;   /* 装饰紫 */
+
+  /* 品牌衍生 (深色品牌/品牌浅/品牌玻璃) */
+  --brand-primary: var(--atlas-violet);
+  --brand-deep: #4F46E5;        /* 深紫, hover/active */
+  --brand-soft: rgba(123, 97, 255, 0.12);  /* 玻璃感的紫雾 */
+  --brand-glow: rgba(123, 97, 255, 0.32);  /* 焦点环 */
+  --brand-gradient: linear-gradient(135deg, #7B61FF 0%, #A855F7 50%, #EC4899 100%); /* 紫→粉 */
+
+  /* ═══ 语义色 (直接对应 9 色) ═══ */
+  --color-success: var(--atlas-green);
+  --color-warning: var(--atlas-orange);
+  --color-danger: var(--atlas-red);
+  --color-info: var(--atlas-cyan);
+
+  /* ═══ 文字色 (Apple 紧凑风 3 档) ═══ */
+  --text-primary: #1D1D1F;
+  --text-secondary: #6E6E73;
+  --text-tertiary: #AEAEB2;
+  --text-inverse: #F5F5F7;
+
+  /* ═══ 背景色 (5 档从纯白到玻璃) ═══ */
+  --bg-primary: #F7F8FB;
+  --bg-secondary: #FFFFFF;
+  --bg-tertiary: #EEF1F6;
+  --bg-elevated: #FFFFFF;
+  --bg-overlay: rgba(255, 255, 255, 0.85);  /* 玻璃感浅底 */
+  --bg-glass: rgba(255, 255, 255, 0.72);    /* 玻璃面板 */
+  --bg-glass-strong: rgba(255, 255, 255, 0.88);
+
+  /* ═══ 边框 ═══ */
+  --border: #D2D2D7;
+  --border-subtle: #E8ECF3;
+  --border-glass: rgba(255, 255, 255, 0.4);  /* 玻璃面板用 */
+
+  /* ═══ 阴影 (P1 B 紧凑风 + Atlas 玻璃感) ═══ */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.08);
+  --shadow-hover: 0 2px 8px rgba(123, 97, 255, 0.18);  /* 品牌色微光 (Atlas 精髓) */
+  --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.08);
+  --shadow-popup: 0 20px 60px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.04);
+  --shadow-popup-dark: 0 8px 24px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.06);
+
+  /* ═══ 圆角 (Atlas 4 档) ═══ */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-2xl: 28px;
+  --radius-full: 9999px;
+
+  /* ═══ 间距 (Atlas 8 档) ═══ */
+  --space-2xs: 2px;
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-base: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+  --space-4xl: 96px;
+
+  /* ═══ 字号 (P1 B 紧凑风 5 档) ═══ */
+  --font-size-aux: 12px;
+  --font-size-body: 14px;
+  --font-size-card: 16px;
+  --font-size-section: 20px;
+  --font-size-page: 24px;
+  --font-size-hero: 40px;
+
+  /* ═══ 行高 (P1 B 紧凑风 3 档) ═══ */
+  --line-height-inline: 24px;
+  --line-height-card: 32px;
+  --line-height-list: 40px;
+  --line-height-base: 1.6;
+  --line-height-tight: 1.3;
+
+  /* ═══ 字体栈 ═══ */
+  --font-sans: "Inter", "HarmonyOS Sans SC", -apple-system, BlinkMacSystemFont,
+               "PingFang SC", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", "SF Mono", Consolas, Monaco, monospace;
+
+  /* ═══ 动画 ═══ */
+  --transition-fast: 0.15s ease;
+  --transition-base: 0.3s ease;
+  --transition-slow: 0.5s ease;
+  --transition-glass: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ═══ 布局 ═══ */
+  --topbar-h: 48px;
+  --sider-w: 240px;
+  --sider-w-collapsed: 64px;
+  --content-max-w: 1280px;
+  --content-pad: 24px;
+
+  /* ═══ 侧栏 (R 后修订: 浅色=浅灰, 暗色=紫调深灰; 激活态悬浮胶囊) ═══ */
+  --sider-bg: #F8F9FC;                  /* 浅色侧栏, 跟主区同属纯浅色体系 */
+  --sider-bg-elevated: #FFFFFF;          /* 浅色悬浮元素 (胶囊/弹层) */
+  --sider-bg-deep: #E8E8ED;              /* 浅色二级底 (对比层级) */
+  --sider-divider: rgba(0, 0, 0, 0.06);
+  --sider-fg: #1D1D1F;
+  --sider-fg-muted: #6E6E73;
+  --sider-fg-subtle: #98989F;
+  --sider-fg-active: #1D1D1F;
+  /* 悬浮胶囊: 紫色淡背景 + 微光边框, 不通栏 */
+  --sider-active-bg: rgba(123, 97, 255, 0.08);
+  --sider-active-border: rgba(123, 97, 255, 0.18);
+  --sider-active-indicator: var(--atlas-violet);
+  --sider-hover-bg: rgba(0, 0, 0, 0.04);
+  --sider-pill-radius: 10px;           /* 胶囊圆角 */
+  --sider-pill-margin-y: 4px;          /* 胶囊上下边距 */
+  --sider-pill-margin-x: 10px;         /* 胶囊左右边距 (脱离边缘) */
+  --sider-pill-padding: 8px 12px;       /* 胶囊内边距 */
+  --sider-item-height: 40px;           /* 菜单项高度 (胶囊感) */
+  --sider-item-radius: 10px;
+  --sider-item-padding: 0 12px;        /* 非激活项的内边距 */
+  --sider-sub-fg: #98989F;             /* 二级菜单文字色 */
+  --sider-sub-fs: 13px;                /* 二级菜单字号 */
+  /* 浅色侧栏品牌色锚: 1px 紫边 + 顶部 2% 紫渐变 */
+  --sider-brand-tint: linear-gradient(180deg, rgba(123, 97, 255, 0.02) 0%, rgba(123, 97, 255, 0) 120px);
+  --sider-brand-border: 1px solid rgba(123, 97, 255, 0.12);
+
+  /* ═══ 玻璃强度 (Atlas 精髓) ═══ */
+  --glass-blur: 20px;
+  --glass-blur-strong: 40px;
+  --glass-saturate: 180%;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   暗色主题 (data-theme="dark")
+   ════════════════════════════════════════════════════════════════ */
+[data-theme='dark'] {
+  --atlas-violet: #9B85FF;    /* 暗色下亮一档 (更鲜) */
+  --atlas-blue: #60A5FA;
+  --atlas-green: #34D399;
+  --atlas-orange: #FB923C;
+  --atlas-pink: #F472B6;
+  --atlas-cyan: #22D3EE;
+  --atlas-yellow: #FACC15;
+  --atlas-red: #F87171;
+  --atlas-purple: #C084FC;
+
+  --brand-primary: var(--atlas-violet);
+  --brand-deep: #7B61FF;
+  --brand-soft: rgba(155, 133, 255, 0.16);
+  --brand-glow: rgba(155, 133, 255, 0.4);
+
+  --color-success: var(--atlas-green);
+  --color-warning: var(--atlas-orange);
+  --color-danger: var(--atlas-red);
+  --color-info: var(--atlas-cyan);
+
+  --text-primary: #F5F5F7;
+  --text-secondary: #AEAEB2;
+  --text-tertiary: #6E6E73;
+  --text-inverse: #1D1D1F;
+
+  --bg-primary: #000000;
+  --bg-secondary: #0A0A0B;
+  --bg-tertiary: #1C1C1E;
+  --bg-elevated: #1C1C1E;
+  --bg-overlay: rgba(28, 28, 30, 0.85);
+  --bg-glass: rgba(28, 28, 30, 0.6);
+  --bg-glass-strong: rgba(28, 28, 30, 0.85);
+
+  --border: #38383A;
+  --border-subtle: #2C2C2E;
+  --border-glass: rgba(255, 255, 255, 0.08);
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.6);
+  --shadow-hover: 0 2px 8px rgba(155, 133, 255, 0.32);
+  --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.5);
+  --shadow-popup: var(--shadow-popup-dark);
+
+  --sider-bg: #1e1e2f;                  /* R 后: 暗色继续紫调 */
+  --sider-bg-elevated: #2a2a3e;
+  --sider-bg-deep: #16161f;
+  --sider-divider: rgba(255, 255, 255, 0.06);
+  --sider-fg: #E8E8ED;
+  --sider-fg-muted: #98989D;
+  --sider-fg-subtle: #6E6E73;
+  --sider-fg-active: #FFFFFF;
+  --sider-active-bg: rgba(155, 133, 255, 0.22);
+  --sider-active-border: rgba(155, 133, 255, 0.4);
+  --sider-active-indicator: var(--atlas-violet);
+  --sider-hover-bg: rgba(255, 255, 255, 0.05);
+  --sider-brand-tint: linear-gradient(180deg, rgba(155, 133, 255, 0.04) 0%, rgba(155, 133, 255, 0) 120px);
+  --sider-brand-border: 1px solid rgba(155, 133, 255, 0.16);
+}
+
+/* ════════════════════════════════════════════════════════════════
+   玻璃质感 (Atlas 精髓, 在 light/dark 通用)
+   ════════════════════════════════════════════════════════════════ */
+.glass {
+  background: var(--bg-glass);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  border: 1px solid var(--border-glass);
+  box-shadow: var(--shadow-glass);
+}
+
+.glass-strong {
+  background: var(--bg-glass-strong);
+  backdrop-filter: blur(var(--glass-blur-strong)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur-strong)) saturate(var(--glass-saturate));
+  border: 1px solid var(--border-glass);
+  box-shadow: var(--shadow-popup);
+}
+
+/* 品牌色微光 (hover 状态) */
+.glow-on-hover {
+  transition: box-shadow var(--transition-glass);
+}
+.glow-on-hover:hover {
+  box-shadow: var(--shadow-hover);
+}
+
+/* 品牌色渐变文字 (Atlas hero 段常用) */
+.text-gradient {
+  background: var(--brand-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
