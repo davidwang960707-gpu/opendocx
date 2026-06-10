@@ -62,3 +62,45 @@ async def test_stats(client: AsyncClient, admin_token: str):
     assert "project_count" in data
     assert "document_count" in data
     assert "published_count" in data
+
+
+@pytest.mark.asyncio
+async def test_document_revision_conflict_returns_409(client: AsyncClient, admin_token: str):
+    headers = {"Authorization": f"Bearer {admin_token}"}
+
+    project_resp = await client.post(
+        "/api/v1/projects",
+        json={"name": "Conflict Project", "slug": "conflict-project"},
+        headers=headers,
+    )
+    assert project_resp.status_code == 201
+    version_id = project_resp.json()["data"]["default_version_id"]
+
+    create_resp = await client.post(
+        f"/api/v1/versions/{version_id}/documents",
+        json={"title": "Conflict Doc", "slug": "conflict-doc", "content": "base"},
+        headers=headers,
+    )
+    assert create_resp.status_code == 201
+    doc = create_resp.json()["data"]
+    assert doc["revision"] == 1
+
+    first_save = await client.put(
+        f"/api/v1/documents/{doc['id']}",
+        json={"content": "alice edit", "base_revision": 1},
+        headers=headers,
+    )
+    assert first_save.status_code == 200
+    assert first_save.json()["data"]["revision"] == 2
+
+    stale_save = await client.put(
+        f"/api/v1/documents/{doc['id']}",
+        json={"content": "bob edit", "base_revision": 1},
+        headers=headers,
+    )
+    assert stale_save.status_code == 409
+    detail = stale_save.json()["detail"]
+    assert detail["code"] == "document_conflict"
+    assert detail["latest_revision"] == 2
+    assert detail["latest_content"] == "alice edit"
+    assert detail["draft_content"] == "bob edit"

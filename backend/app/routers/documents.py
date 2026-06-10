@@ -255,9 +255,26 @@ async def update_document(
         raise HTTPException(status_code=404, detail="文档不存在")
 
     update_data = req.model_dump(exclude_unset=True)
+    base_revision = update_data.pop("base_revision", None)
+    if "content" in update_data and base_revision is not None and doc.revision != base_revision:
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "code": "document_conflict",
+                "message": "文档已被其他人保存, 请对比差异后合并",
+                "document_id": doc.id,
+                "base_revision": base_revision,
+                "latest_revision": doc.revision,
+                "latest_content": doc.content or "",
+                "draft_content": update_data.get("content") or "",
+                "latest_updated_at": doc.updated_at.isoformat() if doc.updated_at else None,
+            },
+        )
     before = {k: getattr(doc, k) for k in update_data.keys() if k != "content"}
     for key, value in update_data.items():
         setattr(doc, key, value)
+    if update_data:
+        doc.revision = (doc.revision or 1) + 1
 
     await db.commit()
     await db.refresh(doc)

@@ -151,6 +151,7 @@ export interface Document {
   title: string
   slug: string
   content: string | null
+  revision: number
   file_path: string | null
   status: 'draft' | 'published' | 'archived'
   sort_order: number
@@ -188,6 +189,7 @@ export interface DocumentUpdateRequest {
   status?: string
   parent_id?: string
   sort_order?: number
+  base_revision?: number
 }
 
 // ── 搜索 ──────────────────────────────────────────────

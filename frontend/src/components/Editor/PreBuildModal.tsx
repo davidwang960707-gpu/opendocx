@@ -37,6 +37,8 @@ interface Props {
   selectedDocId: string | null
   /** 当前选中的 doc 编辑器内容 (用于"保存+发布"二合一) */
   selectedDocEditingContent?: string
+  /** 当前选中 doc 打开编辑时的 revision, 用于保存+发布时防覆盖 */
+  selectedDocBaseRevision?: number | null
   /** 构建成功后回调 (父组件用来刷新 lastBuild) */
   onAfterBuild?: (buildResult: any) => void
   /** 父组件的 doc 树 (从 Documents.tsx 传进来) */
@@ -71,7 +73,7 @@ const STATUS_LABELS: Record<string, string> = {
 
 export default function PreBuildModal({
   open, onClose, versionId, versionName,
-  selectedDocId, selectedDocEditingContent,
+  selectedDocId, selectedDocEditingContent, selectedDocBaseRevision,
   onAfterBuild, docTree, onTreeRefresh,
 }: Props) {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
@@ -167,11 +169,16 @@ export default function PreBuildModal({
       await documentApi.update(selectedDocId, {
         content: selectedDocEditingContent,
         status: 'published',
+        base_revision: selectedDocBaseRevision ?? undefined,
       })
       message.success('保存并发布成功')
       onTreeRefresh?.()
     } catch (e: any) {
-      message.error(`保存+发布失败: ${e.message}`)
+      if (e?.response?.status === 409) {
+        message.warning('文档已被其他人保存, 请先回到编辑器处理冲突后再构建')
+      } else {
+        message.error(`保存+发布失败: ${e.message}`)
+      }
     }
   }
 

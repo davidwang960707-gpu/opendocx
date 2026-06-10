@@ -210,13 +210,34 @@
 
 更新文档。需要 admin 或 editor 角色。
 
+编辑器保存正文时建议带上 `base_revision`。它是打开文档或上次保存成功时返回的 `revision`，用于防止多人编辑时静默覆盖别人刚保存的内容。
+
 **请求体：**
 ```json
 {
   "title": "新标题",
   "content": "新内容",
   "status": "published",
-  "sort_order": 2
+  "sort_order": 2,
+  "base_revision": 3
+}
+```
+
+**冲突响应：**
+如果提交正文时服务器文档已经被其他人保存过，接口返回 `409 Conflict`：
+
+```json
+{
+  "detail": {
+    "code": "document_conflict",
+    "message": "文档已被其他人保存, 请对比差异后合并",
+    "document_id": "uuid",
+    "base_revision": 3,
+    "latest_revision": 4,
+    "latest_content": "服务器最新内容",
+    "draft_content": "本次提交内容",
+    "latest_updated_at": "2026-06-10T10:00:00"
+  }
 }
 ```
 

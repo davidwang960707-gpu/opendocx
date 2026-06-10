@@ -19,6 +19,8 @@ class DocumentUpdate(BaseModel):
     status: Optional[str] = None
     parent_id: Optional[str] = None
     sort_order: Optional[int] = None
+    # 编辑器打开时拿到的文档版本号。保存正文时带回, 后端用它防止覆盖别人刚保存的内容。
+    base_revision: Optional[int] = None
 
 
 class DocumentOut(BaseModel):
@@ -28,6 +30,7 @@ class DocumentOut(BaseModel):
     title: str
     slug: str
     content: Optional[str]
+    revision: int
     file_path: Optional[str]
     status: str
     sort_order: int

@@ -23,6 +23,7 @@ class Document(Base):
     title: Mapped[str] = mapped_column(String(500), nullable=False)
     slug: Mapped[str] = mapped_column(String(200), nullable=False)
     content: Mapped[Optional[str]] = mapped_column(Text)
+    revision: Mapped[int] = mapped_column(Integer, default=1, server_default="1", nullable=False)
     file_path: Mapped[Optional[str]] = mapped_column(String(500))
     status: Mapped[DocStatus] = mapped_column(SAEnum(DocStatus), default=DocStatus.draft)
     sort_order: Mapped[int] = mapped_column(Integer, default=0)

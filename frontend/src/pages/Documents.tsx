@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback, useRef, useMemo } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
-import { Typography, Button, Tree, Modal, Form, Input, message, Space, Select, Spin, Tag, Tooltip, Dropdown, Drawer, Popconfirm, Segmented, Breadcrumb, TreeSelect } from 'antd'
+import { Typography, Button, Tree, Modal, Form, Input, message, Space, Select, Spin, Tag, Tooltip, Dropdown, Drawer, Popconfirm, Segmented, Breadcrumb, TreeSelect, Alert } from 'antd'
 import {
   FileTextOutlined, PlusOutlined, FolderOutlined, FolderAddOutlined,
   ArrowLeftOutlined, SaveOutlined,
@@ -26,6 +26,35 @@ import type { DocumentTreeNode, DocumentCreateRequest } from '../types/api'
 import ProjectOverview from './ProjectOverview'
 
 const { Text } = Typography
+const { TextArea } = Input
+
+type ConflictState = {
+  documentId: string
+  docTitle: string
+  baseRevision: number | null
+  latestRevision: number
+  latestContent: string
+  draftContent: string
+  latestUpdatedAt?: string | null
+}
+
+function buildDiffRows(left: string, right: string) {
+  const leftLines = left.split('\n')
+  const rightLines = right.split('\n')
+  const max = Math.max(leftLines.length, rightLines.length)
+  return Array.from({ length: max }, (_, i) => {
+    const server = leftLines[i] ?? ''
+    const draft = rightLines[i] ?? ''
+    return {
+      line: i + 1,
+      server,
+      draft,
+      changed: server !== draft,
+      onlyServer: i >= rightLines.length,
+      onlyDraft: i >= leftLines.length,
+    }
+  })
+}
 
 export default function Documents() {
   const { projectId } = useParams<{ projectId: string }>()
@@ -43,6 +72,9 @@ export default function Documents() {
   const [selectedFolder, setSelectedFolder] = useState<DocumentTreeNode | null>(null)
   const [editingContent, setEditingContent] = useState('')
   const [savedContent, setSavedContent] = useState('')
+  const [docRevision, setDocRevision] = useState<number | null>(null)
+  const [conflict, setConflict] = useState<ConflictState | null>(null)
+  const [mergeContent, setMergeContent] = useState('')
   const [lastSavedAt, setLastSavedAt] = useState<number | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -73,6 +105,10 @@ export default function Documents() {
   const treePulseTimerRef = useRef<number | null>(null)
   // 引用 MarkdownUploader 的 trigger button — 点 Tree header inbox 时手动打开
   const uploaderRef = useRef<any>(null)
+  const conflictRows = useMemo(
+    () => conflict ? buildDiffRows(conflict.latestContent, conflict.draftContent) : [],
+    [conflict],
+  )
 
   useEffect(() => {
     return () => {
@@ -214,6 +250,7 @@ export default function Documents() {
       // folder: 设 selectedFolder, 清 selectedDoc 编辑态
       setSelectedFolder(node)
       setSelectedDoc(null)
+      setDocRevision(null)
       return
     }
     // 文档: 走原逻辑
@@ -224,22 +261,119 @@ export default function Documents() {
     const content = doc.content || ''
     setEditingContent(content)
     setSavedContent(content)
+    setDocRevision(doc.revision ?? 1)
     setLastSavedAt(doc.updated_at ? new Date(doc.updated_at).getTime() : Date.now())
   }
+
+  const openConflictModal = useCallback((err: any, draftContent: string) => {
+    const detail = err?.response?.data?.detail
+    if (err?.response?.status !== 409 || detail?.code !== 'document_conflict') return false
+    const nextConflict: ConflictState = {
+      documentId: detail.document_id || selectedDoc?.id,
+      docTitle: selectedDoc?.title || '当前文档',
+      baseRevision: detail.base_revision ?? docRevision,
+      latestRevision: detail.latest_revision ?? 1,
+      latestContent: detail.latest_content ?? '',
+      draftContent: detail.draft_content ?? draftContent,
+      latestUpdatedAt: detail.latest_updated_at,
+    }
+    setConflict(nextConflict)
+    setMergeContent(nextConflict.draftContent)
+    message.warning('文档已被其他人保存, 请对比差异后合并')
+    return true
+  }, [docRevision, selectedDoc])
+
+  const applySavedDocument = useCallback((updated: any, fallbackContent: string) => {
+    const content = updated?.content ?? fallbackContent
+    setSelectedDoc(updated)
+    setEditingContent(content)
+    setSavedContent(content)
+    setDocRevision(updated?.revision ?? null)
+    setLastSavedAt(updated?.updated_at ? new Date(updated.updated_at).getTime() : Date.now())
+    setSaveSuccessPulse(true)
+    if (savePulseTimerRef.current) window.clearTimeout(savePulseTimerRef.current)
+    savePulseTimerRef.current = window.setTimeout(() => setSaveSuccessPulse(false), 1600)
+  }, [])
 
   const handleSave = async () => {
     if (!selectedDoc) return
     setSaving(true)
     try {
-      await documentApi.update(selectedDoc.id, { content: editingContent })
-      setSavedContent(editingContent)
-      setLastSavedAt(Date.now())
-      setSaveSuccessPulse(true)
-      if (savePulseTimerRef.current) window.clearTimeout(savePulseTimerRef.current)
-      savePulseTimerRef.current = window.setTimeout(() => setSaveSuccessPulse(false), 1600)
+      const res = await documentApi.update(selectedDoc.id, {
+        content: editingContent,
+        base_revision: docRevision ?? undefined,
+      })
+      applySavedDocument(res.data.data, editingContent)
       message.success('保存成功')
-    } catch {
-      message.error('保存失败')
+    } catch (err: any) {
+      if (!openConflictModal(err, editingContent)) {
+        message.error('保存失败')
+      }
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const handleSaveMergedConflict = async () => {
+    if (!conflict) return
+    setSaving(true)
+    try {
+      const res = await documentApi.update(conflict.documentId, {
+        content: mergeContent,
+        base_revision: conflict.latestRevision,
+      })
+      applySavedDocument(res.data.data, mergeContent)
+      setConflict(null)
+      message.success('已保存合并结果')
+    } catch (err: any) {
+      if (!openConflictModal(err, mergeContent)) {
+        message.error('合并保存失败')
+      }
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const handleUseServerVersion = () => {
+    if (!conflict) return
+    setEditingContent(conflict.latestContent)
+    setSavedContent(conflict.latestContent)
+    setDocRevision(conflict.latestRevision)
+    setSelectedDoc((doc: any) => doc ? {
+      ...doc,
+      content: conflict.latestContent,
+      revision: conflict.latestRevision,
+      updated_at: conflict.latestUpdatedAt || doc.updated_at,
+    } : doc)
+    setLastSavedAt(conflict.latestUpdatedAt ? new Date(conflict.latestUpdatedAt).getTime() : Date.now())
+    setConflict(null)
+    message.info('已载入服务器最新版本')
+  }
+
+  const handleSaveConflictCopy = async () => {
+    if (!conflict || !selectedDoc || !currentVersion) return
+    setSaving(true)
+    try {
+      const suffix = Date.now().toString(36)
+      const res = await documentApi.create(currentVersion, {
+        title: `${selectedDoc.title}（冲突副本）`,
+        slug: `${selectedDoc.slug}-conflict-${suffix}`,
+        content: conflict.draftContent,
+        parent_id: selectedDoc.parent_id || undefined,
+        sort_order: (selectedDoc.sort_order || 0) + 1,
+      })
+      const copy = res.data.data
+      setConflict(null)
+      setSelectedFolder(null)
+      setSelectedDoc(copy)
+      setEditingContent(copy.content || '')
+      setSavedContent(copy.content || '')
+      setDocRevision(copy.revision ?? 1)
+      setLastSavedAt(copy.updated_at ? new Date(copy.updated_at).getTime() : Date.now())
+      await refreshTreeWithPulse()
+      message.success('已保存为副本文档')
+    } catch (err: any) {
+      message.error(`保存副本失败: ${err?.response?.data?.detail || err?.message || '未知错误'}`)
     } finally {
       setSaving(false)
     }
@@ -247,10 +381,11 @@ export default function Documents() {
 
   const handlePublish = async () => {
     if (!selectedDoc) return
-    await documentApi.update(selectedDoc.id, { status: 'published' })
+    const res = await documentApi.update(selectedDoc.id, { status: 'published' })
     message.success('已发布')
     // 刷新 selectedDoc 让 StatusBadges 立刻反映 status 变化
-    setSelectedDoc((d: any) => d ? { ...d, status: 'published' } : d)
+    setSelectedDoc(res.data.data)
+    setDocRevision(res.data.data?.revision ?? docRevision)
     loadDocTree()
   }
 
@@ -861,6 +996,7 @@ export default function Documents() {
         versionName={versions.find(v => v.id === currentVersion)?.version}
         selectedDocId={selectedDoc?.id || null}
         selectedDocEditingContent={editingContent}
+        selectedDocBaseRevision={docRevision}
         docTree={docTree}
         onTreeRefresh={loadDocTree}
         onAfterBuild={(b) => {
@@ -874,6 +1010,89 @@ export default function Documents() {
           buildPulseTimerRef.current = window.setTimeout(() => setBuildSuccessPulse(false), 1800)
         }}
       />
+
+      <Modal
+        title={`发现编辑冲突：${conflict?.docTitle || ''}`}
+        open={!!conflict}
+        width={1120}
+        onCancel={() => setConflict(null)}
+        footer={[
+          <Button key="server" onClick={handleUseServerVersion}>
+            载入服务器版本
+          </Button>,
+          <Button key="copy" onClick={handleSaveConflictCopy} loading={saving}>
+            我的修改另存为副本
+          </Button>,
+          <Button key="save" type="primary" onClick={handleSaveMergedConflict} loading={saving}>
+            保存合并结果
+          </Button>,
+        ]}
+      >
+        {conflict && (
+          <div>
+            <Alert
+              type="warning"
+              showIcon
+              message="这篇文档在你编辑期间已被其他人保存"
+              description={`你打开时的版本是 r${conflict.baseRevision ?? '-'}, 服务器当前版本是 r${conflict.latestRevision}。请对比差异, 调整下方合并结果后再保存。`}
+              style={{ marginBottom: 16 }}
+            />
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16 }}>
+              <div>
+                <Text strong>服务器最新版本</Text>
+                <div style={{ marginTop: 8, border: '1px solid var(--border)', borderRadius: 8, overflow: 'hidden', maxHeight: 260, overflowY: 'auto', background: '#fff' }}>
+                  {conflictRows.map(row => (
+                    <pre
+                      key={`server-${row.line}`}
+                      style={{
+                        margin: 0,
+                        padding: '4px 10px',
+                        minHeight: 24,
+                        whiteSpace: 'pre-wrap',
+                        fontSize: 12,
+                        background: row.changed ? (row.onlyDraft ? '#fff7ed' : '#fff1f0') : '#fff',
+                        borderBottom: '1px solid #f0f0f0',
+                      }}
+                    >
+                      <span style={{ color: '#999', marginRight: 8 }}>{row.line}</span>
+                      {row.onlyDraft ? '' : row.server}
+                    </pre>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <Text strong>我的编辑副本</Text>
+                <div style={{ marginTop: 8, border: '1px solid var(--border)', borderRadius: 8, overflow: 'hidden', maxHeight: 260, overflowY: 'auto', background: '#fff' }}>
+                  {conflictRows.map(row => (
+                    <pre
+                      key={`draft-${row.line}`}
+                      style={{
+                        margin: 0,
+                        padding: '4px 10px',
+                        minHeight: 24,
+                        whiteSpace: 'pre-wrap',
+                        fontSize: 12,
+                        background: row.changed ? (row.onlyServer ? '#f6ffed' : '#fffbe6') : '#fff',
+                        borderBottom: '1px solid #f0f0f0',
+                      }}
+                    >
+                      <span style={{ color: '#999', marginRight: 8 }}>{row.line}</span>
+                      {row.onlyServer ? '' : row.draft}
+                    </pre>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <Text strong>合并后的 Markdown</Text>
+            <TextArea
+              value={mergeContent}
+              onChange={(e) => setMergeContent(e.target.value)}
+              rows={10}
+              style={{ marginTop: 8, fontFamily: 'var(--font-mono, monospace)' }}
+            />
+          </div>
+        )}
+      </Modal>
 
       <Modal
         title={createParentId ? '新建子节点' : '新建文档'}
