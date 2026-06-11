@@ -5,7 +5,7 @@ import html
 from datetime import datetime
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.models import BuildLog, BuildStatus, Document, Version, Project
+from app.models import BuildLog, BuildStatus, Document, DocumentAsset, Version, Project
 from app.config import get_settings
 
 # mistune 3.x Markdown 渲染器（GFM 完整支持）
@@ -2079,13 +2079,41 @@ async def build_docusaurus(
         _static_src = os.path.join(os.path.dirname(__file__), "_static", "static")
         _static_dst = os.path.join(build_dir, "static")
         if os.path.isdir(_static_src):
-            import shutil
             # 用 copytree 同步, 允许存在 (再次 build 不报错)
             try:
                 shutil.copytree(_static_src, _static_dst, dirs_exist_ok=True)
             except Exception as e:
                 # 复制失败不阻塞 build (单文件失败 = 文档图片 404, 但页能渲染)
                 print(f"warn: _static/static 复制失败: {e}")
+
+        # === 用户上传资产: 复制到 build_dir/assets 并准备 URL 重写 ===
+        version_assets = (await db.execute(
+            select(DocumentAsset).where(DocumentAsset.version_id == version_id)
+        )).scalars().all()
+        assets_dir = os.path.join(build_dir, "assets")
+        os.makedirs(assets_dir, exist_ok=True)
+        asset_url_map: dict[str, str] = {}
+        for asset in version_assets:
+            src = os.path.join(settings.data_dir, asset.storage_path)
+            dst = os.path.join(assets_dir, asset.stored_filename)
+            asset_url_map[f"/api/v1/assets/{asset.id}/file"] = asset.public_path
+            if not os.path.exists(src):
+                print(f"warn: asset missing: {asset.storage_path}")
+                continue
+            try:
+                shutil.copy2(src, dst)
+            except Exception as e:
+                print(f"warn: asset copy failed {asset.storage_path}: {e}")
+
+        def _rewrite_asset_urls(markup: str) -> str:
+            for api_url, public_path in asset_url_map.items():
+                escaped_api = html.escape(api_url, quote=True)
+                escaped_public = html.escape(public_path, quote=True)
+                markup = markup.replace(f'src="{escaped_api}"', f'src="{escaped_public}"')
+                markup = markup.replace(f"src='{escaped_api}'", f"src='{escaped_public}'")
+                markup = markup.replace(f'href="{escaped_api}"', f'href="{escaped_public}"')
+                markup = markup.replace(f"href='{escaped_api}'", f"href='{escaped_public}'")
+            return markup
 
         if not publishable_docs:
             build.status = BuildStatus.failed
@@ -2188,6 +2216,7 @@ async def build_docusaurus(
         # 避免 H1 重复（之前 template body 里的 h1 + md 转出的 h1 共两个）。
         for idx, doc in enumerate(publishable_docs):
             body, toc = _md_to_html(doc.content or "")
+            body = _rewrite_asset_urls(body)
             # 如果 markdown 没有以 # 开头，自动补一个 H1（保持视觉一致）
             if not body.lstrip().startswith("<h1"):
                 # 手动补的 H1 也加 id, 跟 TOC 对齐
@@ -2233,6 +2262,7 @@ async def build_docusaurus(
         # Phase 5 段 C: 传 index_doc — published 时用其 markdown 覆盖 Hero
         first_slug = publishable_docs[0].slug if publishable_docs else "index"
         index_body = _render_home_hero(project, sidebar_tree, all_docs, first_slug, index_doc=index_doc)
+        index_body = _rewrite_asset_urls(index_body)
         index_html = _HTML_TEMPLATE
         index_html = index_html.replace("{title}", "首页")
         index_html = index_html.replace("{project_name}", html.escape(project_display_name))

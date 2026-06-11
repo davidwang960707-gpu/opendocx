@@ -8,7 +8,7 @@ import {
   EditOutlined, CompressOutlined, InboxOutlined,
   DoubleRightOutlined, DoubleLeftOutlined, MoreOutlined, RobotOutlined,
   SettingOutlined, StarOutlined, StarFilled, InboxOutlined as ArchiveIcon,
-  FolderOpenOutlined,
+  FolderOpenOutlined, PictureOutlined,
 } from '@ant-design/icons'
 import MDEditor from '@uiw/react-md-editor'
 import EditorAIPanel from '../components/Editor/EditorAIPanel'
@@ -16,6 +16,7 @@ import AIFloatingActions from '../components/Editor/AIFloatingActions'
 import PreBuildModal from '../components/Editor/PreBuildModal'
 import StatusBar from '../components/Editor/StatusBar'
 import MarkdownUploader from '../components/Editor/MarkdownUploader'
+import AssetLibraryModal from '../components/Editor/AssetLibraryModal'
 import AppSider from '../components/AppSider'
 import VersionManageDrawer from '../components/VersionManageDrawer'
 import FolderOverview from '../components/FolderOverview'
@@ -68,6 +69,7 @@ export default function Documents() {
   const [builds, setBuilds] = useState<any[]>([])
   // R15: 预构建弹窗开关
   const [preBuildOpen, setPreBuildOpen] = useState(false)
+  const [assetLibraryOpen, setAssetLibraryOpen] = useState(false)
   const [selectedDoc, setSelectedDoc] = useState<any>(null)
   const [selectedFolder, setSelectedFolder] = useState<DocumentTreeNode | null>(null)
   const [editingContent, setEditingContent] = useState('')
@@ -109,6 +111,31 @@ export default function Documents() {
     () => conflict ? buildDiffRows(conflict.latestContent, conflict.draftContent) : [],
     [conflict],
   )
+
+  const insertMarkdownAtCursor = useCallback((snippet: string) => {
+    const textarea = editorContainerRef.current?.querySelector('textarea') as HTMLTextAreaElement | null
+    if (!textarea) {
+      setEditingContent(prev => {
+        const prefix = prev && !prev.endsWith('\n') ? '\n\n' : ''
+        return `${prev}${prefix}${snippet}\n`
+      })
+      return
+    }
+
+    const start = textarea.selectionStart ?? editingContent.length
+    const end = textarea.selectionEnd ?? start
+    const before = editingContent.slice(0, start)
+    const after = editingContent.slice(end)
+    const beforeBreak = before && !before.endsWith('\n') ? '\n\n' : ''
+    const afterBreak = after && !after.startsWith('\n') ? '\n\n' : '\n'
+    const next = `${before}${beforeBreak}${snippet}${afterBreak}${after}`
+    const cursor = before.length + beforeBreak.length + snippet.length
+    setEditingContent(next)
+    window.setTimeout(() => {
+      textarea.focus()
+      textarea.setSelectionRange(cursor, cursor)
+    }, 0)
+  }, [editingContent])
 
   useEffect(() => {
     return () => {
@@ -869,6 +896,7 @@ export default function Documents() {
               <>
                 <Tooltip title="评论"><Button type="text" size="small" icon={<MessageOutlined />} /></Tooltip>
                 <Tooltip title="历史"><Button type="text" size="small" icon={<HistoryOutlined />} /></Tooltip>
+                <Button size="small" icon={<PictureOutlined />} onClick={() => setAssetLibraryOpen(true)}>资产</Button>
                 <Button size="small" icon={<SaveOutlined />} loading={saving} onClick={handleSave}>保存</Button>
                 <Button size="small" icon={<EyeOutlined />} onClick={handlePublish}>发布</Button>
                 <Button size="small" icon={<DeleteOutlined />} danger onClick={handleDeleteDoc} />
@@ -1010,6 +1038,19 @@ export default function Documents() {
           buildPulseTimerRef.current = window.setTimeout(() => setBuildSuccessPulse(false), 1800)
         }}
       />
+
+      {currentVersion && (
+        <AssetLibraryModal
+          open={assetLibraryOpen}
+          versionId={currentVersion}
+          onClose={() => setAssetLibraryOpen(false)}
+          onInsert={(markdown) => {
+            insertMarkdownAtCursor(markdown)
+            setAssetLibraryOpen(false)
+            message.success('已插入 Markdown 引用')
+          }}
+        />
+      )}
 
       <Modal
         title={`发现编辑冲突：${conflict?.docTitle || ''}`}

@@ -8,6 +8,7 @@ import type {
   Project, ProjectCreateRequest, ProjectUpdateRequest,
   Version, VersionCreateRequest,
   Document, DocumentTreeNode, DocumentCreateRequest, DocumentUpdateRequest,
+  DocumentAsset,
   SearchRequest, SearchResult,
   DashboardStats, BuildLog,
 } from '../types/api'
@@ -105,6 +106,22 @@ export const documentApi = {
   // R6 反馈 5: 拖拽排序 — 客户端把整棵树新位置打平
   reorder: (versionId: string, items: { id: string; parent_id: string | null; sort_order: number }[]) =>
     api.post('/documents/reorder', { version_id: versionId, items }),
+}
+
+// ── 文档资产 ──────────────────────────────────────────
+
+export const assetApi = {
+  list: (versionId: string) =>
+    api.get<ApiResponse<DocumentAsset[]>>(`/versions/${versionId}/assets`),
+  upload: (versionId: string, file: File) => {
+    const form = new FormData()
+    form.append('file', file, file.name)
+    return api.post<ApiResponse<DocumentAsset>>(`/versions/${versionId}/assets`, form, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+      timeout: 60000,
+    })
+  },
+  delete: (assetId: string) => api.delete(`/assets/${assetId}`),
 }
 
 // ── 搜索 ──────────────────────────────────────────────

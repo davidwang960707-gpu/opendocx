@@ -13,6 +13,7 @@ from app.schemas.document import (
     DocumentCreate, DocumentUpdate, DocumentOut, DocumentTreeOut,
     ReorderRequest, ReorderItem,
 )
+from app.schemas.asset import AssetOut
 from app.schemas.search import SearchRequest, SearchResult
 from app.schemas.build import BuildOut
 from app.schemas.feedback import FeedbackCreate, CommentOut, FeedbackReactionOut, CommentsListOut
@@ -28,6 +29,7 @@ __all__ = [
     # document
     "DocumentCreate", "DocumentUpdate", "DocumentOut", "DocumentTreeOut",
     "ReorderRequest", "ReorderItem",
+    "AssetOut",
     # search
     "SearchRequest", "SearchResult",
     # build

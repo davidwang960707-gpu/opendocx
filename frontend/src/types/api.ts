@@ -64,6 +64,22 @@ export interface PasswordChangeRequest {
   new_password: string
 }
 
+// ── 文档资产 ──────────────────────────────────────────
+
+export interface DocumentAsset {
+  id: string
+  version_id: string
+  original_filename: string
+  stored_filename: string
+  content_type: string
+  size_bytes: number
+  kind: 'image' | 'video' | 'file'
+  public_path: string
+  file_url: string
+  markdown: string
+  created_at: string
+}
+
 // P1-W3-A2: 审计日志
 export interface AuditLog {
   id: string

@@ -247,6 +247,58 @@
 
 ---
 
+## 文档资产
+
+### GET /versions/{vid}/assets
+
+列出版本资产库。需要认证。
+
+**响应：**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "uuid",
+      "version_id": "uuid",
+      "original_filename": "screenshot.png",
+      "stored_filename": "uuid.png",
+      "content_type": "image/png",
+      "size_bytes": 12034,
+      "kind": "image",
+      "public_path": "assets/uuid.png",
+      "file_url": "/api/v1/assets/uuid/file",
+      "markdown": "![screenshot.png](/api/v1/assets/uuid/file)",
+      "created_at": "2026-06-11T10:00:00"
+    }
+  ]
+}
+```
+
+### POST /versions/{vid}/assets
+
+上传图片、GIF、视频或常见附件。需要 admin 或 editor 角色。
+
+**请求：**
+
+`multipart/form-data`，字段名为 `file`。
+
+**说明：**
+
+- 单文件最大 20MB。
+- 支持 `.png`、`.jpg`、`.jpeg`、`.gif`、`.webp`、`.mp4`、`.webm`、`.mov`、`.pdf`、`.zip`、`.txt`、`.csv`、`.xlsx`、`.docx`、`.pptx`。
+- 编辑器插入 `file_url`；构建静态站时会把它重写为 `public_path`，并复制文件到站点 `assets/` 目录。
+
+### GET /assets/{aid}/file
+
+读取资产文件。该地址用于后台编辑器预览和 Markdown 引用。
+
+### DELETE /assets/{aid}
+
+删除资产记录和本地文件。需要 admin 或 editor 角色。已插入文档的 Markdown 引用不会自动清理。
+
+---
+
 ## AI 搜索
 
 ### POST /search

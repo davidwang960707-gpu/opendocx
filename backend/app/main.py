@@ -12,7 +12,7 @@ from fastapi.staticfiles import StaticFiles
 from app.config import get_settings
 from app.database import engine
 from app.middleware.rate_limit import RateLimitMiddleware
-from app.routers import auth, projects, documents, search, build, stats, editor, feedback, users  # P1-W3-A1
+from app.routers import assets, auth, projects, documents, search, build, stats, editor, feedback, users  # P1-W3-A1
 
 settings = get_settings()
 logger = logging.getLogger("opendocx")
@@ -90,6 +90,7 @@ app.add_middleware(RateLimitMiddleware, max_requests=300, window_seconds=60)
 app.include_router(auth.router)
 app.include_router(projects.router)
 app.include_router(documents.router)
+app.include_router(assets.router)
 app.include_router(search.router)
 app.include_router(build.router)
 app.include_router(stats.router)
