@@ -226,6 +226,10 @@ export default function Projects() {
     }
   }
 
+  const openProjectDocs = (projectId: string) => {
+    navigate(`/projects/${projectId}/docs`)
+  }
+
   const filtered = useMemo(() => {
     let list = projects
     // P1-W2-P3: 顶部 Tab scope 过滤 (我的项目 = created_by=currentUser.id)
@@ -382,7 +386,7 @@ export default function Projects() {
                 <article
                   key={p.id}
                   className="project-card"
-                  onClick={() => navigate(`/projects/${p.id}/docs`)}
+                  onClick={() => openProjectDocs(p.id)}
                   data-testid={`project-card-${p.slug}`}
                 >
                   {/* 顶部 brand bar */}
@@ -396,7 +400,30 @@ export default function Projects() {
                         {p.name[0]?.toUpperCase()}
                       </div>
                       <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ fontSize: 16, fontWeight: 600, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        <div
+                          role="button"
+                          tabIndex={0}
+                          data-testid={`project-title-${p.slug}`}
+                          onClick={(e) => { e.stopPropagation(); openProjectDocs(p.id) }}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault()
+                              e.stopPropagation()
+                              openProjectDocs(p.id)
+                            }
+                          }}
+                          style={{
+                            display: 'inline-block',
+                            maxWidth: '100%',
+                            fontSize: 16,
+                            fontWeight: 600,
+                            color: 'var(--text-primary)',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                            cursor: 'pointer',
+                          }}
+                        >
                           {p.name}
                         </div>
                         <div style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>{p.slug}</div>

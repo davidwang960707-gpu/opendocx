@@ -45,10 +45,7 @@ def _to_comment_out(row: DocumentFeedback, replies: list[DocumentFeedback]) -> C
         user_id=row.user_id,
         user_name=row.user_name or "匿名读者",
         body=row.body,
-        # Postgres `now()` 返 timestamptz (UTC), asyncpg 读出丢 tzinfo 变 naive.
-        # 显式 attach UTC tzinfo, Pydantic dump 时输出 '...+00:00' 格式,
-        # 浏览器按 UTC 解读后再 convert 到 local 渲染 (与服务器 0 偏差)
-        created_at=_attach_utc(row.created_at),
+        created_at=row.created_at,
         replies=[_to_comment_out(r, []) for r in replies],
     )
 
@@ -286,7 +283,7 @@ async def admin_list_feedbacks(
             "user_name": r.user_name,
             "body": r.body,
             "parent_id": r.parent_id,
-            "created_at": _attach_utc(r.created_at).isoformat() if r.created_at else None,
+            "created_at": r.created_at.isoformat() if r.created_at else None,
         } for r in rows],
         "total": total,
         "limit": limit,

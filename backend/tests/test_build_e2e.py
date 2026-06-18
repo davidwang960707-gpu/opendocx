@@ -82,6 +82,28 @@ async def test_build_docusaurus_produces_html_files(client: AsyncClient, admin_t
 
 
 @pytest.mark.asyncio
+async def test_rebuild_cleans_stale_html_files(client: AsyncClient, admin_token: str):
+    """重构建应清理旧 HTML, 避免删除/改 slug 后发布站残留幽灵页面。"""
+    headers = {"Authorization": f"Bearer {admin_token}"}
+    vid, _ = await _create_project_with_doc(client, headers, "test-build-clean", "Test Build Clean")
+
+    r = await client.post(f"/api/v1/build/{vid}", headers=headers)
+    assert r.status_code == 200
+
+    from app.config import get_settings
+    settings = get_settings()
+    build_dir = os.path.join(settings.data_dir, "builds", "test-build-clean", "v1.0")
+    stale_path = os.path.join(build_dir, "stale-page.html")
+    with open(stale_path, "w", encoding="utf-8") as f:
+        f.write("<!doctype html><title>stale</title>")
+    assert os.path.exists(stale_path)
+
+    r = await client.post(f"/api/v1/build/{vid}", headers=headers)
+    assert r.status_code == 200
+    assert not os.path.exists(stale_path)
+
+
+@pytest.mark.asyncio
 async def test_manifest_returns_built_projects(client: AsyncClient, admin_token: str):
     """manifest 端点应返回已构建项目清单"""
     headers = {"Authorization": f"Bearer {admin_token}"}

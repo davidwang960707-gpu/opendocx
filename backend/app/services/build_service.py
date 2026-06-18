@@ -2,6 +2,7 @@
 import os
 import re
 import html
+import shutil
 from datetime import datetime
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -240,7 +241,7 @@ _FEEDBACK_JS = r"""
 
   function timeAgo(iso) {
     var d = new Date(iso);
-    var diff = (Date.now() - d.getTime()) / 1000;
+    var diff = Math.max(0, (Date.now() - d.getTime()) / 1000);
     if (diff < 60) return Math.floor(diff) + ' 秒前';
     if (diff < 3600) return Math.floor(diff / 60) + ' 分钟前';
     if (diff < 86400) return Math.floor(diff / 3600) + ' 小时前';
@@ -359,7 +360,6 @@ _FEEDBACK_JS = r"""
         input.focus();
       } else if (deleteBtn) {
         var did = deleteBtn.getAttribute('data-delete');
-        if (!confirm('删除这条反馈？')) return;
         fetch(API_BASE + '/feedbacks/' + did, {
           method: 'DELETE',
           headers: { 'X-Visitor-Id': visitorId }
@@ -2061,6 +2061,8 @@ async def build_docusaurus(
 
     try:
         build_dir = os.path.join(settings.data_dir, "builds", project.slug, version.version)
+        if os.path.isdir(build_dir):
+            shutil.rmtree(build_dir)
         os.makedirs(build_dir, exist_ok=True)
 
         # === 复制 design tokens CSS (Phase 5 段 B: Infima 6 段 token 抽离) ===
@@ -2069,7 +2071,6 @@ async def build_docusaurus(
         _tokens_dst_dir = os.path.join(build_dir, "static", "css")
         os.makedirs(_tokens_dst_dir, exist_ok=True)
         if os.path.exists(_tokens_src):
-            import shutil
             shutil.copy(_tokens_src, os.path.join(_tokens_dst_dir, "tokens.css"))
         # tokens.css 缺失不阻塞 build (模板用 <link> 引用, 缺则浏览器 404 但页能渲染)
 

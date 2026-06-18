@@ -381,10 +381,10 @@ export default function ProjectOverview({
                 {indexDoc.status === 'published' ? '已发布' : '草稿'}
               </Tag>
             ) : (
-              <Tag color="red">未找到</Tag>
+              <Tag color="default">默认首页</Tag>
             )}
           </Space>
-          <Tooltip title={indexDoc ? '编辑 markdown Hero 内容' : '项目未建 index doc'}>
+          <Tooltip title={indexDoc ? '编辑 markdown Hero 内容' : '当前使用默认首页，可在文档管理中新建 slug=index 的文档来自定义'}>
             <Button
               type="primary"
               icon={<EditOutlined />}
@@ -392,7 +392,7 @@ export default function ProjectOverview({
               onClick={() => setIndexEditorOpen(true)}
               data-testid="open-index-editor"
             >
-              {indexDoc ? '编辑 Hero' : '未配置'}
+              {indexDoc ? '编辑 Hero' : '默认首页'}
             </Button>
           </Tooltip>
         </Space>
@@ -415,12 +415,12 @@ export default function ProjectOverview({
           </div>
         ) : !indexDocLoading ? (
           <Empty
-            description="未找到 slug=index 的首页配置文档"
+            description="当前使用默认首页"
             image={Empty.PRESENTED_IMAGE_SIMPLE}
             style={{ margin: '12px 0' }}
           >
             <Text type="secondary" style={{ fontSize: 11 }}>
-              create_project 会自动建; 若是早期项目, 可在文档管理手动建一个 slug=index 的草稿。
+              如需自定义静态站首页，可在文档管理中新建 slug=index 的文档，发布后重新构建。
             </Text>
           </Empty>
         ) : null}

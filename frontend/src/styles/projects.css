@@ -22,7 +22,7 @@
 }
 
 .project-card-body {
-  padding: 16px 18px 14px;
+  padding: 16px 112px 14px 18px;
 }
 
 .project-card-mark {
@@ -46,9 +46,11 @@
   display: flex;
   gap: 2px;
   opacity: 0;
+  pointer-events: none;
   transition: opacity 0.15s;
 }
 
 .project-card:hover .project-card-actions {
   opacity: 1;
+  pointer-events: auto;
 }
