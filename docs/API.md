@@ -443,7 +443,7 @@ POST /api/v1/editor/ai
 
 ```
 event: meta
-data: {"action": "continue", "model": "mimo-v2.5-pro"}
+data: {"action": "continue", "model": "gpt-4o-mini"}
 
 event: token
 data: {"delta": "这是一段"}
@@ -460,7 +460,10 @@ data: {"ok": true}
 ```
 GET  /api/v1/editor/actions   列出 6 动作清单 (前端 AI 浮窗用)
 GET  /api/v1/editor/health    检查 LLM provider 配置可用性
+POST /api/v1/editor/analyze   文档规则分析, 不调用 LLM
 ```
+
+`/api/v1/editor/analyze` 返回摘要、健康度、术语一致性、接口一致性和相关文档。它是确定性的规则分析能力，用于右侧文档 Insight 面板，不冒充大模型生成结果。
 
 ---
 

@@ -1,26 +1,24 @@
 /** EditorAIPanel — 编辑器右侧 AI 面板
  *
  * P0-B-4 + P1-UI-6: 真实文档分析 (调 /api/v1/editor/analyze)
- * - AI 状态头：节点 / 冲突 / 协作者
- * - AI Insight：术语一致性 / 接口一致性 / 知识关联 (来自后端规则分析)
- * - AI 摘要：置信度
+ * - 分析状态头：相关文档 / 规则建议
+ * - 文档 Insight：术语一致性 / 接口一致性 / 知识关联 (来自后端规则分析)
+ * - 规则摘要：置信度
  * - 健康度：分数 + 等级 (4 维拆解: heading/code/paragraph/link)
- * - AI 推荐：快捷动作
+ * - 改进建议：展示规则分析发现的问题
  * - 底部状态条
  *
  * 零 emoji，SVG 图标；纯 React + AntD + 全局 CSS 变量
  */
 import { useEffect, useState } from 'react'
-import { Avatar, Tooltip, Progress, Tag, Button } from 'antd'
+import { Progress, Tag } from 'antd'
 import {
-  RobotFilled, WarningFilled, LinkOutlined, ThunderboltFilled,
+  RobotFilled, WarningFilled, ThunderboltFilled,
   CheckCircleFilled, FileTextOutlined, CodeOutlined, ClusterOutlined,
-  BulbOutlined, ApiOutlined, PythonOutlined, LoadingOutlined,
+  BulbOutlined, ApiOutlined, LoadingOutlined,
   FireFilled, BookOutlined, DisconnectOutlined, AlertFilled,
 } from '@ant-design/icons'
-import { useAuthStore } from '../../stores/auth'
 import { editorApi, type AnalyzeResponse } from '../../services/editorApi'
-import { computeStats } from './StatusBar'
 
 interface Props {
   content: string
@@ -30,20 +28,11 @@ interface Props {
   versionId?: string
   docId?: string
   onInsertText?: (text: string) => void
-  onAction?: (actionId: string) => void
 }
 
-// 协作者头像（mock，未来接协作服务）
-const MOCK_COLLABORATORS = [
-  { name: 'Admin', color: '#4F46E5' },
-  { name: '李雷', color: '#0071e3' },
-  { name: '韩梅梅', color: '#ff9f0a' },
-]
-
 export default function EditorAIPanel({
-  content, projectName, versionLabel, docTitle, versionId, docId, onAction,
+  content, projectName, versionLabel, docTitle, versionId, docId,
 }: Props) {
-  const { user } = useAuthStore()
   const [analyzing, setAnalyzing] = useState(false)
   const [result, setResult] = useState<AnalyzeResponse | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -82,8 +71,6 @@ export default function EditorAIPanel({
 
   // 字数（实时）
   const wordCount = content.length
-  const readMinutes = Math.max(1, Math.round(wordCount / 300))
-  const s = computeStats(content)
 
   const health = result?.health ?? null
   const summary = result?.summary ?? null
@@ -92,7 +79,7 @@ export default function EditorAIPanel({
   const related = result?.knowledge?.related ?? []
 
   const totalIssues = hasDocument ? (term?.issues.length ?? 0) + (iface?.issues.length ?? 0) : 0
-  const linkedCount = hasDocument ? (related.length || s.knowledgeNodes) : 0
+  const linkedCount = hasDocument ? related.length : 0
 
   const healthColor =
     !health ? '#AEAEB2' :
@@ -115,26 +102,15 @@ export default function EditorAIPanel({
           </span>
         </div>
         <div className="ai-collab-line">
-          <Avatar.Group size="small" max={{ count: 3 }}>
-            {MOCK_COLLABORATORS.map(c => (
-              <Tooltip key={c.name} title={c.name}>
-                <Avatar style={{ background: c.color, fontSize: 11 }}>{c.name[0]}</Avatar>
-              </Tooltip>
-            ))}
-            <Tooltip title={user?.name || '你'}>
-              <Avatar style={{ background: '#1D1D1F', fontSize: 11 }}>
-                {(user?.name || '我')[0]}
-              </Avatar>
-            </Tooltip>
-          </Avatar.Group>
+          <span className="ai-state-text">规则分析</span>
         </div>
       </header>
 
-      {/* AI Insight 卡 */}
+      {/* 文档 Insight 卡 */}
       <section className="ai-card">
         <h3 className="ai-card-title">
           <BulbOutlined style={{ color: '#4F46E5' }} />
-          AI Insight
+          文档 Insight
         </h3>
         <div className="ai-insight-list">
           {/* 术语一致性 */}
@@ -146,8 +122,6 @@ export default function EditorAIPanel({
               : (term ? '通过' : '—')}
             chips={term?.issues}
             detailTags={term?.terms?.slice(0, 6).map(t => `${t.term} ×${t.count}`)}
-            actionLabel="查看"
-            onAction={() => onAction?.('lint-terminology')}
           />
           {/* 接口一致性 */}
           <InsightRow
@@ -158,8 +132,6 @@ export default function EditorAIPanel({
               : '—'}
             chips={iface?.issues}
             detailTags={iface?.endpoints?.slice(0, 3).map(e => `${e.method} ${e.path}`)}
-            actionLabel="查看"
-            onAction={() => onAction?.('lint-interface')}
           />
           {/* 知识关联 */}
           <InsightRow
@@ -168,17 +140,15 @@ export default function EditorAIPanel({
             status={related.length ? `${related.length} 个相关文档` : '—'}
             chips={related.slice(0, 4).map(r => r.title)}
             detailTags={related.slice(0, 3).map(r => `${r.match_count} 匹配`)}
-            actionLabel="链接"
-            onAction={() => onAction?.('link-knowledge')}
           />
         </div>
       </section>
 
-      {/* AI 摘要 */}
+      {/* 规则摘要 */}
       <section className="ai-card">
         <h3 className="ai-card-title">
           <FileTextOutlined style={{ color: '#4F46E5' }} />
-          AI 摘要
+          规则摘要
           {summary && (
             <span className="ai-confidence">
               置信度 <strong>{summary.confidence}%</strong>
@@ -187,8 +157,8 @@ export default function EditorAIPanel({
         </h3>
         <p className="ai-summary-text">
           {!hasDocument
-            ? '选择一篇文档后，AI 会在这里给出摘要、健康度和关联建议。'
-            : summary?.text || '写够 50 字后 AI 会自动生成摘要...'}
+            ? '选择一篇文档后，这里会基于规则给出摘要、健康度和关联建议。'
+            : summary?.text || '写够 50 字后会自动生成规则摘要...'}
         </p>
         {summary && health?.stats && (
           <div className="ai-summary-stats">
@@ -230,34 +200,25 @@ export default function EditorAIPanel({
         </div>
       </section>
 
-      {/* AI 推荐 */}
+      {/* 改进建议 */}
       <section className="ai-card">
         <h3 className="ai-card-title">
           <CodeOutlined style={{ color: '#4F46E5' }} />
-          AI 推荐
+          改进建议
         </h3>
         <div className="ai-recommend-list">
-          <Button
-            block
-            icon={<ApiOutlined />}
-            onClick={() => onAction?.('generate-openapi')}
-            className="ai-recommend-btn"
-            disabled={!hasDocument || !iface || iface.endpoints.length === 0}
-          >
-            生成 OpenAPI 规范
-            {iface && iface.endpoints.length > 0 && (
-              <span className="ai-recommend-count">({iface.endpoints.length})</span>
-            )}
-          </Button>
-          <Button
-            block
-            icon={<PythonOutlined />}
-            onClick={() => onAction?.('generate-sdk')}
-            className="ai-recommend-btn"
-            disabled={!hasDocument || !iface || iface.endpoints.length === 0}
-          >
-            生成 Python SDK
-          </Button>
+          {totalIssues > 0 ? (
+            <>
+              {term?.issues.slice(0, 2).map((issue, i) => (
+                <Tag key={`term-${i}`} className="ai-insight-chip">{issue}</Tag>
+              ))}
+              {iface?.issues.slice(0, 2).map((issue, i) => (
+                <Tag key={`iface-${i}`} className="ai-insight-chip">{issue}</Tag>
+              ))}
+            </>
+          ) : (
+            <span className="ai-summary-text">暂无明确问题。后续版本会接入更完整的生成式修复建议。</span>
+          )}
         </div>
       </section>
 
@@ -279,12 +240,12 @@ export default function EditorAIPanel({
         ) : analyzing ? (
           <span className="ai-footer-status analyzing">
             <LoadingOutlined spin style={{ marginRight: 6 }} />
-            AI 正在分析文档...
+            正在分析文档...
           </span>
         ) : (
           <span className="ai-footer-status">
             <span className="ai-dot" />
-            AI 就绪 · 已分析 {wordCount} 字
+            规则分析就绪 · 已分析 {wordCount} 字
           </span>
         )}
       </footer>
@@ -293,15 +254,13 @@ export default function EditorAIPanel({
 }
 
 function InsightRow({
-  icon, label, status, chips, detailTags, actionLabel, onAction,
+  icon, label, status, chips, detailTags,
 }: {
   icon: React.ReactNode
   label: string
   status: string
   chips?: string[]
   detailTags?: string[]
-  actionLabel: string
-  onAction: () => void
 }) {
   return (
     <div className="ai-insight-row">
@@ -309,7 +268,6 @@ function InsightRow({
         {icon}
         <span className="ai-insight-label">{label}</span>
         <span className="ai-insight-status">{status}</span>
-        <a className="ai-insight-action" onClick={onAction}>{actionLabel}</a>
       </div>
       {chips && chips.length > 0 && (
         <div className="ai-insight-chips">

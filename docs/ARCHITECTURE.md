@@ -107,7 +107,12 @@ v0.1.0-alpha 使用 JWT 认证。
 
 ## 6. AI 服务
 
-AI 能力由 `services/llm/` 抽象，默认兼容 OpenAI 风格接口。
+AI 能力分为两类：
+
+- 编辑器 AI 浮层：通过 `services/llm/` 调用 OpenAI 风格 Chat Completions 接口，SSE 流式返回。
+- 文档 Insight：通过 `services/ai_analyzer.py` 做规则分析，不调用 LLM，不冒充生成式 AI 输出。
+
+LLM Provider 默认兼容 OpenAI 风格接口。
 
 常见配置：
 
@@ -118,7 +123,7 @@ LLM_API_KEY=your-key
 LLM_MODEL=gpt-4o-mini
 ```
 
-AI 输出通常通过 SSE 流式返回，前端逐步渲染。
+编辑器 AI 输出通过 SSE 流式返回，前端逐步渲染。文档 Insight 直接返回结构化 JSON。
 
 ## 7. 静态站构建
 

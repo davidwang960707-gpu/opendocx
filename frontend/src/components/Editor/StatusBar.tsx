@@ -6,9 +6,7 @@
  * 数据源：
  *   - 字数 / 阅读时长：content 直接算（300 字/分钟）
  *   - 保存状态：父组件传入（unsaved | saving | saved | savedAt）
- *   - 关联节点 / 引用文档：与 EditorAIPanel 共享（同样 mock hash）
- *
- * 跟 AI 面板的"知识关联"数据必须一致——所以抽到 useDocStats hook 里。
+ *   - 关联节点 / 引用文档：预留真实知识图谱/引用关系入口，v0.1.0 不造假展示。
  */
 import { useMemo } from 'react'
 
@@ -36,13 +34,11 @@ const READ_WPM = 300
 export function computeStats(content: string): Stats {
   const wordCount = content.length
   const readMinutes = Math.max(1, Math.round(wordCount / READ_WPM))
-  // 与 EditorAIPanel mock 一致：seed = content.length % 100
-  const seed = wordCount % 100
   return {
     wordCount,
     readMinutes,
-    knowledgeNodes: wordCount < 50 ? 0 : 12 + (seed % 8),
-    citedDocs: wordCount < 50 ? 0 : 5 + (seed % 4),
+    knowledgeNodes: 0,
+    citedDocs: 0,
   }
 }
 

@@ -9,17 +9,16 @@
  *   continue  续写   rewrite  重写
  *   explain   解释   qa       问答
  *   summarize 总结   polish   润色
- * + 更多下拉（生成测试 / 生成接口 / 优化文案）
  */
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { Modal, Button, Spin, message } from 'antd'
 import {
   EditOutlined, SyncOutlined, QuestionCircleOutlined,
   FileSearchOutlined, CompressOutlined, StarOutlined,
-  CheckOutlined, CloseOutlined, ThunderboltOutlined, DownOutlined,
-  CodeOutlined, FileTextOutlined, SendOutlined,
+  CheckOutlined, CloseOutlined, ThunderboltOutlined,
+  SendOutlined,
 } from '@ant-design/icons'
-import { editorApi, type AIAction } from '../../services/editorApi'
+import { editorApi } from '../../services/editorApi'
 
 interface Props {
   /** 编辑器容器 ref（监听 selection 变化） */
@@ -61,19 +60,12 @@ const PRIMARY_ACTIONS = [
   { id: 'polish',    label: '润色',  icon: <StarOutlined />,        needs: ['selection'] },
 ] as const
 
-const MORE_ACTIONS = [
-  { id: 'generate-tests',  label: '生成测试',  icon: <CodeOutlined /> },
-  { id: 'generate-openapi', label: '生成接口',  icon: <FileTextOutlined /> },
-  { id: 'improve',          label: '优化文案',  icon: <StarOutlined /> },
-]
-
 export default function AIFloatingActions({ editorRef, content, onReplace, context }: Props) {
   const [visible, setVisible] = useState(false)
   const [position, setPosition] = useState<{ top: number; left: number } | null>(null)
   const [selectedText, setSelectedText] = useState('')
   // R13 fix: 同时存 selection 区间, 用于精确替换 (不用 indexOf 二次匹配)
   const [selectionRange, setSelectionRange] = useState<SelectionRange | null>(null)
-  const [moreOpen, setMoreOpen] = useState(false)
   const [streaming, setStreaming] = useState(false)
   const [pending, setPending] = useState<PendingChange | null>(null)
   const [streamingText, setStreamingText] = useState('')
@@ -181,14 +173,6 @@ export default function AIFloatingActions({ editorRef, content, onReplace, conte
     }
   }, [editorRef])
 
-  // 关闭"更多"下拉当点击外部
-  useEffect(() => {
-    if (!moreOpen) return
-    const close = () => setMoreOpen(false)
-    setTimeout(() => document.addEventListener('click', close, { once: true }), 0)
-    return () => document.removeEventListener('click', close)
-  }, [moreOpen])
-
   // 浮层显示时自动聚焦内联 query 输入框 (R11)
   useEffect(() => {
     if (visible) {
@@ -211,7 +195,6 @@ export default function AIFloatingActions({ editorRef, content, onReplace, conte
     prefill?: { question?: string; selection?: string; selectionStart?: number; selectionEnd?: number },
   ) => {
     setVisible(false)
-    setMoreOpen(false)
 
     // qa 需要先问问题 (R11: tip 内联输入已可直接传 prefill.question, 跳过 Modal)
     if (actionId === 'qa' && !prefill?.question) {
@@ -246,13 +229,6 @@ export default function AIFloatingActions({ editorRef, content, onReplace, conte
       return
     }
 
-    // "更多"里的动作：本地映射到后端 action（生成测试/接口/优化文案 → 续写语义）
-    const realAction =
-      actionId === 'generate-tests'  ? 'continue' :
-      actionId === 'generate-openapi' ? 'continue' :
-      actionId === 'improve'          ? 'polish' :
-      actionId
-
     // 计算 selection 位置 (R13 fix: 用 state 里存的区间, 不用 indexOf 二次匹配)
     // 因为 trim 后的 text 跟 start..end 区间长度对不上, indexOf 经常 -1
     const selText = prefill?.selection ?? selectedText
@@ -271,7 +247,7 @@ export default function AIFloatingActions({ editorRef, content, onReplace, conte
       }
     }
 
-    runAction(realAction, label, {
+    runAction(actionId, label, {
       selection: selText,
       question: prefill?.question,
       selectionStart,
@@ -417,30 +393,6 @@ export default function AIFloatingActions({ editorRef, content, onReplace, conte
                 <span>{a.label}</span>
               </button>
             ))}
-            <div className="ai-floating-more">
-              <button
-                className="ai-floating-btn"
-                disabled={streaming}
-                onClick={(e) => { e.stopPropagation(); setMoreOpen(v => !v) }}
-              >
-                更多
-                <DownOutlined style={{ fontSize: 9 }} />
-              </button>
-              {moreOpen && (
-                <div className="ai-floating-more-menu">
-                  {MORE_ACTIONS.map(a => (
-                    <div
-                      key={a.id}
-                      className="ai-floating-more-item"
-                      onClick={() => trigger(a.id, a.label)}
-                    >
-                      {a.icon}
-                      <span>{a.label}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
           </div>
         </div>
       )}

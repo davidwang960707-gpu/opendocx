@@ -96,15 +96,14 @@ examples/markdown-rendering-showcase.md
 
 OpenDocX 支持两类 AI 辅助：
 
-- 选中文本后的浮层操作。
-- 右侧 AI 面板的上下文辅助。
+- 选中文本后的浮层操作：调用已配置的 LLM Provider。
+- 右侧文档 Insight：规则分析术语、接口、摘要、健康度和相关文档，不调用 LLM。
 
 常见操作：
 
 - 续写。
 - 改写。
 - 摘要。
-- 翻译。
 - 解释。
 - 问答。
 

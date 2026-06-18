@@ -679,12 +679,6 @@ export default function Documents() {
     }
   }
 
-  // AI 面板动作处理（后续 P0-B-5 浮层会复用）
-  const handleAIAction = (actionId: string) => {
-    console.log('[AI action]', actionId)
-    message.info(`AI 动作: ${actionId}（P0-B-5 浮层启用后真正触发）`)
-  }
-
   // 递归把后端 tree 转换成 AntD Tree 需要的 treeData
   // 支持任意层级; 文件夹/子节点用 FolderOutlined
   // 长文件名截断用 titleRender + Tooltip
@@ -979,7 +973,6 @@ export default function Documents() {
           docTitle={selectedDoc?.title}
           versionId={currentVersion || undefined}
           docId={selectedDoc?.id}
-          onAction={handleAIAction}
         />
       )}
 

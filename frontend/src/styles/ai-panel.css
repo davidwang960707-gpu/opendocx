@@ -296,7 +296,7 @@
   border-left: 2px solid var(--brand-primary);
 }
 
-/* === AI Insight 行 === */
+/* === 文档 Insight 行 === */
 .ai-insight-list {
   display: flex;
   flex-direction: column;
@@ -370,7 +370,7 @@
   text-align: right;
 }
 
-/* === AI 推荐按钮 === */
+/* === 改进建议 === */
 .ai-recommend-list {
   display: flex;
   flex-direction: column;
