@@ -16,6 +16,8 @@ interface Props {
   versionId: string
   onClose: () => void
   onInsert: (markdown: string) => void
+  autoPick?: boolean
+  onAutoPickDone?: () => void
 }
 
 function formatSize(bytes: number) {
@@ -30,7 +32,7 @@ function iconFor(asset: DocumentAsset) {
   return <FileOutlined />
 }
 
-export default function AssetLibraryModal({ open, versionId, onClose, onInsert }: Props) {
+export default function AssetLibraryModal({ open, versionId, onClose, onInsert, autoPick, onAutoPickDone }: Props) {
   const inputRef = useRef<HTMLInputElement>(null)
   const [assets, setAssets] = useState<DocumentAsset[]>([])
   const [loading, setLoading] = useState(false)
@@ -52,6 +54,15 @@ export default function AssetLibraryModal({ open, versionId, onClose, onInsert }
   useEffect(() => {
     if (open) loadAssets()
   }, [open, versionId])
+
+  useEffect(() => {
+    if (!open || !autoPick) return
+    const timer = window.setTimeout(() => {
+      inputRef.current?.click()
+      onAutoPickDone?.()
+    }, 80)
+    return () => window.clearTimeout(timer)
+  }, [open, autoPick, onAutoPickDone])
 
   const handleFiles = async (files: FileList | null) => {
     if (!files || files.length === 0) return

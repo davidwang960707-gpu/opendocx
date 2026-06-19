@@ -70,6 +70,7 @@ export default function Documents() {
   // R15: 预构建弹窗开关
   const [preBuildOpen, setPreBuildOpen] = useState(false)
   const [assetLibraryOpen, setAssetLibraryOpen] = useState(false)
+  const [assetLibraryAutoPick, setAssetLibraryAutoPick] = useState(false)
   const [selectedDoc, setSelectedDoc] = useState<any>(null)
   const [selectedFolder, setSelectedFolder] = useState<DocumentTreeNode | null>(null)
   const [editingContent, setEditingContent] = useState('')
@@ -105,6 +106,7 @@ export default function Documents() {
   const savePulseTimerRef = useRef<number | null>(null)
   const buildPulseTimerRef = useRef<number | null>(null)
   const treePulseTimerRef = useRef<number | null>(null)
+  const currentVersionRef = useRef('')
   // 引用 MarkdownUploader 的 trigger button — 点 Tree header inbox 时手动打开
   const uploaderRef = useRef<any>(null)
   const conflictRows = useMemo(
@@ -136,6 +138,19 @@ export default function Documents() {
       textarea.setSelectionRange(cursor, cursor)
     }, 0)
   }, [editingContent])
+
+  useEffect(() => {
+    currentVersionRef.current = currentVersion
+  }, [currentVersion])
+
+  const openAssetLibrary = useCallback((autoPick = false) => {
+    if (!currentVersionRef.current) {
+      message.info('请先选择一个版本')
+      return
+    }
+    setAssetLibraryAutoPick(autoPick)
+    setAssetLibraryOpen(true)
+  }, [])
 
   useEffect(() => {
     return () => {
@@ -175,7 +190,13 @@ export default function Documents() {
       id: 'doc.upload', label: '上传 Markdown 文档', group: '文档',
       keywords: ['upload', '上传', 'import', 'md', 'markdown'],
       icon: <RocketOutlined />,
-      run: () => { message.info('点击左栏上方"上传 .md"按钮') },
+      run: () => { uploaderRef.current?.pick() },
+    },
+    {
+      id: 'doc.asset-upload', label: '上传图片/附件', group: '文档',
+      keywords: ['asset', 'image', 'upload', '上传', '图片', '附件'],
+      icon: <PictureOutlined />, shortcut: '⌘U',
+      run: () => openAssetLibrary(true),
     },
     {
       id: 'ai.continue', label: 'AI 续写（光标处）', group: 'AI',
@@ -190,6 +211,17 @@ export default function Documents() {
       run: () => { message.info('请用 AI 浮层 / AI 面板触发（需选区）') },
     },
   ])
+
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (!(e.metaKey || e.ctrlKey) || e.shiftKey || e.altKey || e.key.toLowerCase() !== 'u') return
+      if (conflict || preBuildOpen || modalOpen || moveModalOpen || versionDrawerOpen) return
+      e.preventDefault()
+      openAssetLibrary(true)
+    }
+    document.addEventListener('keydown', onKeyDown)
+    return () => document.removeEventListener('keydown', onKeyDown)
+  }, [conflict, modalOpen, moveModalOpen, openAssetLibrary, preBuildOpen, versionDrawerOpen])
 
   useEffect(() => {
     if (!projectId) return
@@ -890,7 +922,9 @@ export default function Documents() {
               <>
                 <Tooltip title="评论"><Button type="text" size="small" icon={<MessageOutlined />} /></Tooltip>
                 <Tooltip title="历史"><Button type="text" size="small" icon={<HistoryOutlined />} /></Tooltip>
-                <Button size="small" icon={<PictureOutlined />} onClick={() => setAssetLibraryOpen(true)}>资产</Button>
+                <Tooltip title="资产库 / 上传图片附件 (⌘U / Ctrl+U)">
+                  <Button size="small" icon={<PictureOutlined />} onClick={() => openAssetLibrary(false)}>资产</Button>
+                </Tooltip>
                 <Button size="small" icon={<SaveOutlined />} loading={saving} onClick={handleSave}>保存</Button>
                 <Button size="small" icon={<EyeOutlined />} onClick={handlePublish}>发布</Button>
                 <Button size="small" icon={<DeleteOutlined />} danger onClick={handleDeleteDoc} />
@@ -1036,10 +1070,16 @@ export default function Documents() {
         <AssetLibraryModal
           open={assetLibraryOpen}
           versionId={currentVersion}
-          onClose={() => setAssetLibraryOpen(false)}
+          autoPick={assetLibraryAutoPick}
+          onAutoPickDone={() => setAssetLibraryAutoPick(false)}
+          onClose={() => {
+            setAssetLibraryOpen(false)
+            setAssetLibraryAutoPick(false)
+          }}
           onInsert={(markdown) => {
             insertMarkdownAtCursor(markdown)
             setAssetLibraryOpen(false)
+            setAssetLibraryAutoPick(false)
             message.success('已插入 Markdown 引用')
           }}
         />
