@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef, useMemo } from 'react'
+import { useEffect, useState, useCallback, useRef, useMemo, type ClipboardEvent } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { Typography, Button, Tree, Modal, Form, Input, message, Space, Select, Spin, Tag, Tooltip, Dropdown, Drawer, Popconfirm, Segmented, Breadcrumb, TreeSelect, Alert } from 'antd'
 import {
@@ -22,8 +22,8 @@ import VersionManageDrawer from '../components/VersionManageDrawer'
 import FolderOverview from '../components/FolderOverview'
 import StatusBadges from '../components/StatusBadges'
 import { useRegisterCommands } from '../App'
-import { projectApi, versionApi, documentApi, buildApi } from '../services/api'
-import type { DocumentTreeNode, DocumentCreateRequest } from '../types/api'
+import { projectApi, versionApi, documentApi, buildApi, assetApi } from '../services/api'
+import type { DocumentTreeNode, DocumentCreateRequest, DocumentAsset } from '../types/api'
 import ProjectOverview from './ProjectOverview'
 
 const { Text } = Typography
@@ -37,6 +37,57 @@ type ConflictState = {
   latestContent: string
   draftContent: string
   latestUpdatedAt?: string | null
+}
+
+const PASTE_FILE_EXTENSIONS: Record<string, string> = {
+  'image/png': '.png',
+  'image/jpeg': '.jpg',
+  'image/gif': '.gif',
+  'image/webp': '.webp',
+  'video/mp4': '.mp4',
+  'video/webm': '.webm',
+  'video/quicktime': '.mov',
+  'application/pdf': '.pdf',
+  'text/plain': '.txt',
+  'text/csv': '.csv',
+  'application/zip': '.zip',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': '.xlsx',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': '.docx',
+  'application/vnd.openxmlformats-officedocument.presentationml.presentation': '.pptx',
+}
+
+function normalizePastedFile(file: File, index: number): File {
+  if (/\.[a-z0-9]{1,8}$/i.test(file.name)) return file
+  const ext = PASTE_FILE_EXTENSIONS[file.type]
+  if (!ext) return file
+  const prefix = file.type.startsWith('image/')
+    ? 'pasted-image'
+    : file.type.startsWith('video/')
+      ? 'pasted-video'
+      : 'pasted-file'
+  return new File([file], `${prefix}-${Date.now()}-${index + 1}${ext}`, {
+    type: file.type,
+    lastModified: file.lastModified || Date.now(),
+  })
+}
+
+function getFilesFromClipboard(event: ClipboardEvent<HTMLElement>): File[] {
+  const seen = new Set<string>()
+  const files: File[] = []
+  const add = (file: File | null) => {
+    if (!file) return
+    const key = `${file.name}:${file.type}:${file.size}:${file.lastModified}`
+    if (seen.has(key)) return
+    seen.add(key)
+    files.push(file)
+  }
+
+  Array.from(event.clipboardData.files || []).forEach(add)
+  Array.from(event.clipboardData.items || []).forEach((item) => {
+    if (item.kind === 'file') add(item.getAsFile())
+  })
+
+  return files.map(normalizePastedFile)
 }
 
 function buildDiffRows(left: string, right: string) {
@@ -151,6 +202,56 @@ export default function Documents() {
     setAssetLibraryAutoPick(autoPick)
     setAssetLibraryOpen(true)
   }, [])
+
+  const uploadAndInsertAssets = useCallback(async (files: File[]) => {
+    const versionId = currentVersionRef.current
+    if (!versionId) {
+      message.info('请先选择一个版本')
+      return
+    }
+    if (!selectedDoc) {
+      message.info('请先选择一篇文档')
+      return
+    }
+
+    const key = 'clipboard-assets-upload'
+    message.open({ key, type: 'loading', content: `正在上传 ${files.length} 个剪贴板文件...`, duration: 0 })
+    const uploaded: DocumentAsset[] = []
+    const failed: string[] = []
+
+    for (const file of files) {
+      try {
+        const res = await assetApi.upload(versionId, file)
+        uploaded.push(res.data.data)
+      } catch (e: any) {
+        const reason = e?.response?.data?.detail || e?.message || '上传失败'
+        failed.push(`${file.name || '未命名文件'}: ${reason}`)
+      }
+    }
+
+    if (uploaded.length) {
+      insertMarkdownAtCursor(uploaded.map(asset => asset.markdown).join('\n\n'))
+    }
+
+    if (failed.length && uploaded.length) {
+      message.warning({
+        key,
+        content: `已上传 ${uploaded.length} 个，${failed.length} 个失败：${failed[0]}`,
+        duration: 5,
+      })
+    } else if (failed.length) {
+      message.error({ key, content: `粘贴上传失败：${failed[0]}`, duration: 5 })
+    } else {
+      message.success({ key, content: `已上传并插入 ${uploaded.length} 个文件`, duration: 2.5 })
+    }
+  }, [insertMarkdownAtCursor, selectedDoc])
+
+  const handleEditorPaste = useCallback((event: ClipboardEvent<HTMLElement>) => {
+    const files = getFilesFromClipboard(event)
+    if (!files.length) return
+    event.preventDefault()
+    uploadAndInsertAssets(files)
+  }, [uploadAndInsertAssets])
 
   useEffect(() => {
     return () => {
@@ -874,7 +975,7 @@ export default function Documents() {
       {hiddenUploader}
 
       {/* === 中栏 编辑器 === */}
-      <main className="docs-main" ref={editorContainerRef}>
+      <main className="docs-main" ref={editorContainerRef} onPaste={handleEditorPaste}>
         <header className="docs-main-header">
           <div className="docs-main-header-left">
             <Button type="text" size="small" icon={<ArrowLeftOutlined />} onClick={() => navigate('/projects')}>返回项目列表</Button>
